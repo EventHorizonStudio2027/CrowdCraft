@@ -6,7 +6,7 @@ const vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 test('studio has a single executable script with valid JavaScript',()=>{
- assert.equal(scripts.length,5);
+ assert.equal(scripts.length,6);
  for(const [i,script] of scripts.entries())assert.doesNotThrow(()=>new vm.Script(script,{filename:'studio-inline-'+i+'.js'}));
 });
 test('studio uses isolated preview and restrictive content security policy',()=>{
@@ -33,3 +33,5 @@ test('local project library has save, restore, backup and safe text rendering',(
 test('studio viewport controls and accessible editor feedback exist',()=>{assert.match(html,/data-width="390px"/);assert.match(html,/data-width="768px"/);assert.match(html,/id="editor-metrics"/);assert.match(html,/id="preview-refresh"/);assert.match(scripts[3],/setRangeText/);assert.match(scripts[3],/aria-pressed/);});
 
 test('version history has bounded snapshots and restore controls',()=>{assert.match(html,/id="snapshot-save"/);assert.match(html,/id="snapshot-list"/);assert.match(scripts[4],/maxCount=15,maxBytes=8000000/);assert.match(scripts[4],/stopImmediatePropagation/);assert.match(scripts[4],/editor\.dispatchEvent/);assert.match(scripts[4],/localStorage\.setItem/);});
+
+test('editor find replace and HTML diagnostics are wired',()=>{assert.match(html,/id="editor-find"/);assert.match(html,/id="editor-replace-all"/);assert.match(html,/id="diagnostics-status"/);assert.match(scripts[5],/DOMParser/);assert.match(scripts[5],/setRangeText/);assert.match(scripts[5],/editor\.dispatchEvent/);});
