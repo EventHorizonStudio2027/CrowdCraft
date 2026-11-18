@@ -6,7 +6,7 @@ const vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 test('studio has a single executable script with valid JavaScript',()=>{
- assert.equal(scripts.length,2);
+ assert.equal(scripts.length,3);
  for(const [i,script] of scripts.entries())assert.doesNotThrow(()=>new vm.Script(script,{filename:'studio-inline-'+i+'.js'}));
 });
 test('studio uses isolated preview and restrictive content security policy',()=>{
@@ -27,3 +27,5 @@ test('starter template parses and contains valid executable scripts',()=>{
 test('editing, local persistence, keyboard save and export remain wired',()=>{
  for(const token of ['source.addEventListener("input"','localStorage.setItem','localStorage.getItem','e.metaKey||e.ctrlKey','new Blob([source.value]'])assert.ok(scripts[0].includes(token),token);
 });
+
+test('local project library has save, restore, backup and safe text rendering',()=>{assert.match(html,/id="project-save"/);assert.match(html,/id="project-import"/);assert.match(html,/id="project-list"/);assert.match(html,/crowd-library-v1/);assert.match(scripts[2],/title\.textContent=p\.name/);assert.match(scripts[2],/new Set\(x\.map\(p=>p\.id\)\)/);});
