@@ -6,8 +6,8 @@ const vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 test('studio has a single executable script with valid JavaScript',()=>{
- assert.equal(scripts.length,1);
- assert.doesNotThrow(()=>new vm.Script(scripts[0],{filename:'studio-inline.js'}));
+ assert.equal(scripts.length,2);
+ for(const [i,script] of scripts.entries())assert.doesNotThrow(()=>new vm.Script(script,{filename:'studio-inline-'+i+'.js'}));
 });
 test('studio uses isolated preview and restrictive content security policy',()=>{
  assert.match(html,/<iframe[^>]*sandbox="allow-scripts"/);
