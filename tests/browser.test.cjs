@@ -76,7 +76,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.match(await page.locator('#project-list').innerText(), /Browser test project/, 'saved library survives reload');
     await page.locator('[data-view="studio"]').click();
     await page.locator('#reset').click();
-    assert.match(await page.locator('#source').inputValue(), /Quick Notes|Game/i, 'reset loads starter');
+    assert.match(await page.locator('#source').inputValue(), /Quick Notes|Star Catcher/i, 'reset loads starter');
     assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
     assert.deepEqual(errors, [], 'no page errors');
   } finally {
