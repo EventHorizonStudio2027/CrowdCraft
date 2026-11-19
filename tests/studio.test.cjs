@@ -6,7 +6,7 @@ const vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 test('studio inline scripts compile as valid JavaScript',()=>{
- assert.equal(scripts.length,9);
+ assert.equal(scripts.length,10);
  for(const [i,script] of scripts.entries())assert.doesNotThrow(()=>new vm.Script(script,{filename:'studio-inline-'+i+'.js'}));
 });
 test('studio uses isolated preview and restrictive content security policy',()=>{
@@ -43,3 +43,5 @@ test('document outline supports source navigation and filters',()=>{assert.match
 test('project library filter and sort are connected',()=>{assert.match(html,/id="project-filter"/);assert.match(html,/id="project-sort"/);assert.match(html,/id="project-count"/);assert.match(scripts[2],/article\.dataset\.updated=p\.updated/);assert.match(scripts[8],/MutationObserver/);assert.match(scripts[8],/insertBefore/);});
 
 test('restore navigation, focus escape, and library empty state are wired',()=>{assert.match(html,/id="project-no-results"/);assert.match(html,/class="library-hint"/);assert.match(scripts[2],/source\.focus\(\)/);assert.match(scripts[6],/e\.key==='Escape'/);assert.match(scripts[8],/project-no-results/);});
+
+test('visual builder has safe replacement confirmation and editable controls',()=>{assert.match(html,/id="visual-builder"/);assert.match(html,/id="builder-generate"/);assert.match(html,/id="builder-color"/);assert.match(scripts[9],/confirm\(/);assert.match(scripts[9],/dispatchEvent/);assert.match(scripts[9],/replaceAll\('&','&amp;'\)/);});
