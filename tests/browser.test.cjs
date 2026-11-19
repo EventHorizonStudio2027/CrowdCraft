@@ -8,11 +8,12 @@ const { chromium } = require('playwright');
 test('browser studio workflow: editor, snippets, project recovery and viewport', async () => {
   const html = fs.readFileSync('index.html', 'utf8');
   const server = http.createServer((req, res) => {
-    if (req.url === '/assets/logo.svg') {
+    if (req.url === '/assets/logo.svg' || req.url === '/assets/brand-wordmark.svg') {
       res.setHeader('Content-Type', 'image/svg+xml');
-      res.end(fs.readFileSync('assets/logo.svg'));
+      res.end(fs.readFileSync('.' + req.url));
       return;
     }
+    if (req.url !== '/') { res.writeHead(404); res.end('Not found'); return; }
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.end(html);
   });
@@ -25,6 +26,10 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     page.on('pageerror', e => errors.push(e.message));
     page.on('dialog', dialog => dialog.accept());
     await page.goto('http://127.0.0.1:' + server.address().port);
+    for (const path of ['assets/logo.svg', 'assets/brand-wordmark.svg']) {
+      const image = page.locator('img[src="' + path + '"]').first();
+      assert.equal(await image.evaluate(el => el.complete && el.naturalWidth > 0), true, path + ' loads as a real image');
+    }
     await page.keyboard.press('Control+k');
     assert.equal(await page.locator('#command-dialog').isVisible(), true, 'command palette opens');
     await page.locator('#command-search').fill('Open studio');
