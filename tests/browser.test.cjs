@@ -32,7 +32,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     const source = await editor.inputValue();
     assert.ok(source.includes('\n'), 'inserted snippet contains real line breaks');
     assert.ok(!source.includes('\\n  '), 'snippet does not contain literal newline escapes');
-    await page.locator('#editor-find').fill('section');
+    await page.locator('#editor-find').fill('script');
     assert.match(await page.locator('#find-status').innerText(), /match/);
     await page.locator('[data-width="390px"]').click();
     assert.equal(await page.locator('#preview').evaluate(el => el.style.width), '390px');
@@ -51,10 +51,13 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await editor.fill('<!doctype html><title>Changed</title><h1>Changed</h1>');
     await page.locator('[data-view="projects"]').click();
     await page.locator('#project-list button').first().click();
+    assert.equal(await page.locator('#studio-view').isVisible(), true, 'restoring a project opens Studio');
     assert.equal(await editor.inputValue(), source);
     await page.locator('[data-view="studio"]').click();
     await page.locator('#editor-focus').click();
     assert.equal(await page.locator('#editor-focus').getAttribute('aria-pressed'), 'true');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#editor-focus').getAttribute('aria-pressed'), 'false', 'Escape exits focus mode');
     await page.waitForTimeout(450);
     const savedDraft = await editor.inputValue();
     await page.reload();
