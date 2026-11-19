@@ -140,6 +140,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#inspector-weight').selectOption('700');
     await page.locator('#inspector-padding').fill('12');
     await page.locator('#inspector-radius').fill('8');
+    await page.locator('#inspector-background').fill('#16324a');
     await page.locator('#inspector-apply').click();
     assert.match(await editor.inputValue(), /New &lt;safe&gt; &amp; clear/, 'inspector safely updates source text');
     assert.match(await editor.inputValue(), /color: #18c9e8/, 'inspector saves chosen color');
@@ -148,6 +149,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.match(await editor.inputValue(), /font-weight: 700/, 'inspector saves font weight');
     assert.match(await editor.inputValue(), /padding: 12px/, 'inspector saves padding');
     assert.match(await editor.inputValue(), /border-radius: 8px/, 'inspector saves corner radius');
+    assert.match(await editor.inputValue(), /background-color: #16324a/, 'inspector saves background color');
     await page.locator('#inspector-refresh').click();
     await page.locator('#inspector-target').selectOption('0');
     await page.locator('#inspector-value').fill('Second revision');
@@ -157,6 +159,11 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal((revisedSource.match(/style=/g) || []).length, 1, 'inspector does not duplicate inline style attributes');
     assert.match(revisedSource, /padding: 12px/, 'text-only edits preserve existing padding');
     assert.match(revisedSource, /border-radius: 8px/, 'text-only edits preserve existing corner radius');
+    assert.match(revisedSource, /background-color: #16324a/, 'text-only edits preserve existing background');
+    await page.locator('#inspector-background').fill('#ffffff');
+    await page.locator('#inspector-reset').click();
+    assert.equal(await page.locator('#inspector-background').inputValue(), '#16324a', 'reset restores selected element background');
+    assert.equal(await editor.inputValue(), revisedSource, 'reset does not mutate source');
     await page.locator('#reset').click();
     assert.match(await page.locator('#source').inputValue(), /Quick Notes|Star Catcher/i, 'reset loads starter');
     assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
