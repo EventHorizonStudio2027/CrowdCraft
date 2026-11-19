@@ -5,6 +5,7 @@ on:
     paths:
       - 'index.html'
       - 'assets/**'
+      - 'tests/studio.test.cjs'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
