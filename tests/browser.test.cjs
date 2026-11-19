@@ -150,6 +150,8 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.match(await editor.inputValue(), /padding: 12px/, 'inspector saves padding');
     assert.match(await editor.inputValue(), /border-radius: 8px/, 'inspector saves corner radius');
     assert.match(await editor.inputValue(), /background-color: #16324a/, 'inspector saves background color');
+    assert.equal(await page.locator('#inspector-target').inputValue(), '0', 'selection remains active after apply');
+    assert.equal(await page.locator('#inspector-apply').isDisabled(), false, 'inspector remains ready for another edit');
     await page.locator('#inspector-refresh').click();
     await page.locator('#inspector-target').selectOption('0');
     await page.locator('#inspector-value').fill('Second revision');
