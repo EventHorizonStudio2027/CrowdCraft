@@ -118,6 +118,8 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#preview-refresh').click();
     await page.frameLocator('#preview').locator('h1').nth(1).click();
     assert.equal(await page.locator('#inspector-target').inputValue(), '1', 'duplicate text selects clicked occurrence');
+    assert.equal(await page.frameLocator('#preview').locator('h1').nth(1).getAttribute('data-crowd-picked'), '', 'clicked duplicate receives selection highlight');
+    assert.equal(await page.frameLocator('#preview').locator('h1').first().getAttribute('data-crowd-picked'), null, 'other duplicate is not highlighted');
     await page.locator('#inspector-pick').click();
     await page.locator('#text-inspector').evaluate(el => el.open = false);
     await editor.fill('<!doctype html><title>Test</title><h1>Old heading</h1><p>Old paragraph</p>');
