@@ -6,7 +6,7 @@ const vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 test('studio inline scripts compile as valid JavaScript',()=>{
- assert.equal(scripts.length,8);
+ assert.equal(scripts.length,9);
  for(const [i,script] of scripts.entries())assert.doesNotThrow(()=>new vm.Script(script,{filename:'studio-inline-'+i+'.js'}));
 });
 test('studio uses isolated preview and restrictive content security policy',()=>{
@@ -39,3 +39,5 @@ test('editor find replace and HTML diagnostics are wired',()=>{assert.match(html
 test('creation snippets and focus mode are available',()=>{assert.match(html,/class="snippet-bar"/);assert.match(html,/id="editor-focus"/);assert.match(scripts[6],/setRangeText/);assert.match(scripts[6],/String\.fromCharCode\(92,110\)/);assert.match(scripts[6],/studio-focused/);assert.match(scripts[6],/dispatchEvent/);});
 
 test('document outline supports source navigation and filters',()=>{assert.match(html,/id="outline-list"/);assert.match(html,/data-filter="structure"/);assert.match(html,/data-filter="assets"/);assert.match(scripts[7],/setSelectionRange/);assert.match(scripts[7],/aria-pressed/);assert.match(scripts[7],/replaceChildren/);});
+
+test('project library filter and sort are connected',()=>{assert.match(html,/id="project-filter"/);assert.match(html,/id="project-sort"/);assert.match(html,/id="project-count"/);assert.match(scripts[2],/article\.dataset\.updated=p\.updated/);assert.match(scripts[8],/MutationObserver/);assert.match(scripts[8],/insertBefore/);});
