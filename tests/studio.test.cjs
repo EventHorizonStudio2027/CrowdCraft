@@ -63,3 +63,5 @@ test('text picker ignores embedded code and supports Escape dismissal',()=>{asse
 test('preview click interception is opt-in and does not affect normal gameplay',()=>{assert.match(scripts[0],/pickEnabled=false/);assert.match(scripts[0],/if\(!pickEnabled\)return/);assert.match(scripts[0],/e.preventDefault\(\)/);assert.match(scripts[13],/preview.addEventListener\('load'/);assert.match(scripts[13],/crowd-pick-mode/);});
 
 test('official brand treatment is wired to app shell and feature icons',()=>{assert.match(html,/assets\/brand-wordmark\.svg/);assert.match(html,/class="brand-showcase"/);assert.match(html,/class="header-wordmark"/);assert.match(html,/class="feature-icon"/);assert.match(html,/prefers-reduced-motion/);assert.match(html,/<symbol id="/);});
+
+test('studio exposes source link and accessible visual selection feedback',()=>{assert.match(html,/class="source-link"/);assert.match(html,/rel="noopener noreferrer"/);assert.match(html,/data-crowd-picked/);assert.match(scripts[0],/crowd-highlight-text/);assert.match(scripts[13],/crowd-highlight-text/);assert.doesNotMatch(scripts[9],/confirm\('Restore the source from before the last generation\?'\)/);});
