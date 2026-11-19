@@ -28,7 +28,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('[data-view="studio"]').click();
     const editor = page.locator('#source');
     assert.ok((await editor.inputValue()).length > 0, 'starter loads');
-    await page.locator('[data-snippet]').first().click();
+    await page.locator('[data-snippet="loop"]').click();
     const source = await editor.inputValue();
     assert.ok(source.includes('\n'), 'inserted snippet contains real line breaks');
     assert.ok(!source.includes('\\n  '), 'snippet does not contain literal newline escapes');
