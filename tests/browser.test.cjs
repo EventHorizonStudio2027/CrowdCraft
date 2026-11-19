@@ -42,6 +42,11 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#project-name').fill('Browser test project');
     await page.locator('#project-save').click();
     assert.match(await page.locator('#project-list').innerText(), /Browser test project/);
+    await page.locator('#project-filter').fill('not-a-match');
+    assert.match(await page.locator('#project-count').innerText(), /0 of 1/);
+    await page.locator('#project-filter').fill('Browser test');
+    assert.match(await page.locator('#project-count').innerText(), /1 of 1/);
+    await page.locator('#project-sort').selectOption('name');
     await page.locator('[data-view="studio"]').click();
     await editor.fill('<!doctype html><title>Changed</title><h1>Changed</h1>');
     await page.locator('[data-view="projects"]').click();
