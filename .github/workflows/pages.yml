@@ -36,6 +36,7 @@ jobs:
           cp -R assets _site/assets
           touch _site/.nojekyll
           test -s _site/index.html
+          grep -q 'id="inspector-undo"' _site/index.html
           test -s _site/assets/logo.svg
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -48,7 +49,7 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in $(seq 1 12); do
-            if curl --fail --silent --show-error --location --max-time 15 --header 'Cache-Control: no-cache' "${PAGE_URL}?revision=${GITHUB_SHA}" -o /tmp/crowdcraft-live.html && grep -q 'CrowdCraft Studio' /tmp/crowdcraft-live.html && grep -q 'id="inspector-next"' /tmp/crowdcraft-live.html; then
+            if curl --fail --silent --show-error --location --max-time 15 --header 'Cache-Control: no-cache' "${PAGE_URL}?revision=${GITHUB_SHA}" -o /tmp/crowdcraft-live.html && grep -q 'CrowdCraft Studio' /tmp/crowdcraft-live.html && grep -q 'id="inspector-next"' /tmp/crowdcraft-live.html && grep -q 'id="inspector-undo"' /tmp/crowdcraft-live.html; then
               echo "Published site responds with current editor: ${PAGE_URL}"
               exit 0
             fi
