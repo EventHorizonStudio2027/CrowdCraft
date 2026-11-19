@@ -25,7 +25,11 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     page.on('pageerror', e => errors.push(e.message));
     page.on('dialog', dialog => dialog.accept());
     await page.goto('http://127.0.0.1:' + server.address().port);
-    await page.locator('[data-view="studio"]').click();
+    await page.keyboard.press('Control+k');
+    assert.equal(await page.locator('#command-dialog').isVisible(), true, 'command palette opens');
+    await page.locator('#command-search').fill('Open studio');
+    await page.locator('#command-search').press('Enter');
+    assert.equal(await page.locator('#studio-view').isVisible(), true, 'command palette navigates');
     const editor = page.locator('#source');
     assert.ok((await editor.inputValue()).length > 0, 'starter loads');
     await page.locator('[data-snippet="loop"]').click();
@@ -70,6 +74,10 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#source').inputValue(), savedDraft, 'autosaved draft survives reload');
     await page.locator('[data-view="projects"]').click();
     assert.match(await page.locator('#project-list').innerText(), /Browser test project/, 'saved library survives reload');
+    await page.locator('[data-view="studio"]').click();
+    await page.locator('#reset').click();
+    assert.match(await page.locator('#source').inputValue(), /Quick Notes|Game/i, 'reset loads starter');
+    assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
     assert.deepEqual(errors, [], 'no page errors');
   } finally {
     if (browser) await browser.close();
