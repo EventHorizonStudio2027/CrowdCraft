@@ -106,6 +106,12 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('[data-view="projects"]').click();
     assert.match(await page.locator('#project-list').innerText(), /Browser test project/, 'saved library survives reload');
     await page.locator('[data-view="studio"]').click();
+    await editor.fill('<!doctype html><title>Test</title><h1>Old heading</h1><p>Old paragraph</p>');
+    await page.locator('#text-inspector summary').click();
+    await page.locator('#inspector-target').selectOption('0');
+    await page.locator('#inspector-value').fill('New <safe> & clear');
+    await page.locator('#inspector-apply').click();
+    assert.match(await editor.inputValue(), /New &lt;safe&gt; &amp; clear/, 'inspector safely updates source text');
     await page.locator('#reset').click();
     assert.match(await page.locator('#source').inputValue(), /Quick Notes|Star Catcher/i, 'reset loads starter');
     assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
