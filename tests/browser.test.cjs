@@ -148,6 +148,15 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.match(await editor.inputValue(), /font-weight: 700/, 'inspector saves font weight');
     assert.match(await editor.inputValue(), /padding: 12px/, 'inspector saves padding');
     assert.match(await editor.inputValue(), /border-radius: 8px/, 'inspector saves corner radius');
+    await page.locator('#inspector-refresh').click();
+    await page.locator('#inspector-target').selectOption('0');
+    await page.locator('#inspector-value').fill('Second revision');
+    await page.locator('#inspector-apply').click();
+    const revisedSource = await editor.inputValue();
+    assert.match(revisedSource, /Second revision/, 'inspector edits existing styled elements');
+    assert.equal((revisedSource.match(/style=/g) || []).length, 1, 'inspector does not duplicate inline style attributes');
+    assert.match(revisedSource, /padding: 12px/, 'text-only edits preserve existing padding');
+    assert.match(revisedSource, /border-radius: 8px/, 'text-only edits preserve existing corner radius');
     await page.locator('#reset').click();
     assert.match(await page.locator('#source').inputValue(), /Quick Notes|Star Catcher/i, 'reset loads starter');
     assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
