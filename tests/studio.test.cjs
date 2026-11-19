@@ -6,7 +6,7 @@ const vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 test('studio inline scripts compile as valid JavaScript',()=>{
- assert.equal(scripts.length,13);
+ assert.equal(scripts.length,14);
  for(const [i,script] of scripts.entries())assert.doesNotThrow(()=>new vm.Script(script,{filename:'studio-inline-'+i+'.js'}));
 });
 test('studio uses isolated preview and restrictive content security policy',()=>{
@@ -53,3 +53,5 @@ test('preview pause, manual refresh and viewport preference are connected',()=>{
 test('generation can be reversed and preview has expanded and copy actions',()=>{assert.match(html,/id="builder-undo"/);assert.match(html,/id="preview-expand"/);assert.match(html,/id="preview-copy"/);assert.match(scripts[9],/previous=source.value/);assert.match(scripts[9],/undo.disabled=false/);assert.match(scripts[11],/preview-expanded/);assert.match(scripts[11],/navigator.clipboard.writeText/);});
 
 test('source navigation and indentation controls are connected',()=>{for(const id of ['editor-line','editor-go-line','editor-indent','editor-outdent','editor-selection'])assert.ok(html.includes('id="'+id+'"'),id);assert.match(scripts[12],/setSelectionRange/);assert.match(scripts[12],/editor\.scrollTop/);assert.match(scripts[12],/e\.shiftKey/);assert.match(scripts[3],/e\.shiftKey/);});
+
+test('visual text inspector limits edits to simple elements and protects newer source',()=>{for(const id of ['text-inspector','inspector-target','inspector-value','inspector-apply','inspector-refresh','inspector-status'])assert.ok(html.includes('id="'+id+'"'),id);assert.match(scripts[13],/editor.value!==scanned/);assert.match(scripts[13],/setRangeText/);assert.match(scripts[13],/replaceAll\('&','&amp;'\)/);assert.match(scripts[13],/entries.length>=120/);});
