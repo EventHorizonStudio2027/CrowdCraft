@@ -38,6 +38,17 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.ok(!source.includes('\\n  '), 'snippet does not contain literal newline escapes');
     await page.locator('#editor-find').fill('script');
     assert.match(await page.locator('#find-status').innerText(), /match/);
+    await page.locator('#preview-pause').click();
+    assert.equal(await page.locator('#preview-pause').getAttribute('aria-pressed'), 'true');
+    const pausedHtml = await page.locator('#preview').evaluate(el => el.srcdoc);
+    await editor.fill('<!doctype html><title>Paused update</title><p>Paused update</p>');
+    await page.waitForTimeout(500);
+    assert.equal(await page.locator('#preview').evaluate(el => el.srcdoc), pausedHtml, 'paused preview remains unchanged');
+    await page.locator('#preview-refresh').click();
+    assert.match(await page.locator('#preview').evaluate(el => el.srcdoc), /Paused update/, 'manual refresh renders latest source');
+    await page.locator('#preview-pause').click();
+    assert.equal(await page.locator('#preview-pause').getAttribute('aria-pressed'), 'false');
+    await editor.fill(source);
     await page.locator('[data-width="390px"]').click();
     assert.equal(await page.locator('#preview').evaluate(el => el.style.width), '390px');
     await page.locator('#snapshot-save').click();
