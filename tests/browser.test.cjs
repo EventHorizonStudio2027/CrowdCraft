@@ -130,6 +130,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#inspector-target').inputValue(), '0', 'preview click selects heading');
     await page.locator('#inspector-pick').click();
     await page.locator('#inspector-target').selectOption('0');
+    assert.equal(await page.frameLocator('#preview').locator('h1').first().getAttribute('data-crowd-picked'), '', 'dropdown selection highlights matching preview element');
     await page.locator('#inspector-value').fill('New <safe> & clear');
     await page.locator('#inspector-color').fill('#18c9e8');
     await page.locator('#inspector-size').fill('28');
