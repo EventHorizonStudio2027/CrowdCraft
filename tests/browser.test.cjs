@@ -36,7 +36,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#editor-line').fill('2');
     await page.locator('#editor-go-line').click();
     assert.match(await page.locator('#editor-selection').innerText(), /Line 2/);
-    await editor.fill('alpha\\nbeta');
+    await editor.fill('alpha\nbeta');
     await editor.evaluate(el => el.setSelectionRange(0,0));
     await page.locator('#editor-indent').click();
     assert.match(await editor.inputValue(), /^  alpha/);
