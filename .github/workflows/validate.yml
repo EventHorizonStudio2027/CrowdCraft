@@ -7,6 +7,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -20,3 +21,11 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Browser regression tests
         run: node --test tests/browser.test.cjs
+      - name: Upload browser failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-failure-evidence
+          path: test-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
