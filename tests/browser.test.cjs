@@ -49,6 +49,10 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#preview-pause').click();
     assert.equal(await page.locator('#preview-pause').getAttribute('aria-pressed'), 'false');
     await editor.fill(source);
+    await page.locator('#preview-expand').click();
+    assert.equal(await page.locator('#preview-expand').getAttribute('aria-expanded'), 'true');
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#preview-expand').getAttribute('aria-expanded'), 'false');
     await page.locator('[data-width="390px"]').click();
     assert.equal(await page.locator('#preview').evaluate(el => el.style.width), '390px');
     await page.locator('#snapshot-save').click();
@@ -75,8 +79,13 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#editor-focus').getAttribute('aria-pressed'), 'false', 'Escape exits focus mode');
     await page.locator('#visual-builder summary').click();
     await page.locator('#builder-title').fill('Visual Builder Test');
+    const beforeGeneration = await editor.inputValue();
     await page.locator('#builder-generate').click();
     assert.match(await editor.inputValue(), /Visual Builder Test/, 'visual builder generated source');
+    await page.locator('#builder-undo').click();
+    assert.equal(await editor.inputValue(), beforeGeneration, 'undo restores source before generation');
+    await page.locator('#builder-undo').click();
+    assert.match(await editor.inputValue(), /Visual Builder Test/, 'undo toggles generated source back');
     assert.match(await page.locator('#builder-status').innerText(), /generated/i);
     await page.waitForTimeout(450);
     const savedDraft = await editor.inputValue();
