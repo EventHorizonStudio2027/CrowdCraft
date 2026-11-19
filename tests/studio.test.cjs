@@ -6,7 +6,7 @@ const vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 test('studio inline scripts compile as valid JavaScript',()=>{
- assert.equal(scripts.length,12);
+ assert.equal(scripts.length,13);
  for(const [i,script] of scripts.entries())assert.doesNotThrow(()=>new vm.Script(script,{filename:'studio-inline-'+i+'.js'}));
 });
 test('studio uses isolated preview and restrictive content security policy',()=>{
@@ -51,3 +51,5 @@ test('command palette and save state are wired',()=>{assert.match(html,/id="comm
 test('preview pause, manual refresh and viewport preference are connected',()=>{assert.match(html,/id="preview-pause"/);assert.match(html,/id="preview-state"/);assert.match(scripts[0],/__previewPaused/);assert.match(scripts[3],/viewportKey/);assert.match(scripts[3],/__previewForce=true/);assert.match(scripts[3],/render\(\)/);});
 
 test('generation can be reversed and preview has expanded and copy actions',()=>{assert.match(html,/id="builder-undo"/);assert.match(html,/id="preview-expand"/);assert.match(html,/id="preview-copy"/);assert.match(scripts[9],/previous=source.value/);assert.match(scripts[9],/undo.disabled=false/);assert.match(scripts[11],/preview-expanded/);assert.match(scripts[11],/navigator.clipboard.writeText/);});
+
+test('source navigation and indentation controls are connected',()=>{for(const id of ['editor-line','editor-go-line','editor-indent','editor-outdent','editor-selection'])assert.ok(html.includes('id="'+id+'"'),id);assert.match(scripts[12],/setSelectionRange/);assert.match(scripts[12],/editor\.scrollTop/);assert.match(scripts[12],/e\.shiftKey/);assert.match(scripts[3],/e\.shiftKey/);});
