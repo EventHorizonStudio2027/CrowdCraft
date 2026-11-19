@@ -55,6 +55,13 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('[data-view="studio"]').click();
     await page.locator('#editor-focus').click();
     assert.equal(await page.locator('#editor-focus').getAttribute('aria-pressed'), 'true');
+    await page.waitForTimeout(450);
+    const savedDraft = await editor.inputValue();
+    await page.reload();
+    await page.locator('[data-view="studio"]').click();
+    assert.equal(await page.locator('#source').inputValue(), savedDraft, 'autosaved draft survives reload');
+    await page.locator('[data-view="projects"]').click();
+    assert.match(await page.locator('#project-list').innerText(), /Browser test project/, 'saved library survives reload');
     assert.deepEqual(errors, [], 'no page errors');
   } finally {
     if (browser) await browser.close();
