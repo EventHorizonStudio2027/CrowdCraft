@@ -57,3 +57,5 @@ test('source navigation and indentation controls are connected',()=>{for(const i
 test('visual text inspector limits edits to simple elements and protects newer source',()=>{for(const id of ['text-inspector','inspector-target','inspector-value','inspector-apply','inspector-refresh','inspector-status'])assert.ok(html.includes('id="'+id+'"'),id);assert.match(scripts[13],/editor.value!==scanned/);assert.match(scripts[13],/setRangeText/);assert.match(scripts[13],/replaceAll\('&','&amp;'\)/);assert.match(scripts[13],/entries.length>=120/);});
 
 test('sandboxed preview text picking only trusts its own frame',()=>{assert.match(html,/id="inspector-pick"/);assert.match(scripts[0],/crowd-text-pick/);assert.match(scripts[13],/event.source!==preview.contentWindow/);assert.match(scripts[13],/picking=false/);assert.match(scripts[13],/matches.length>1/);});
+
+test('text picker ignores embedded code and supports Escape dismissal',()=>{assert.match(scripts[13],/const masked=html.replace/);assert.match(scripts[13],/script\|style\|template/);assert.match(scripts[13],/e.key==='Escape'&&picking/);});
