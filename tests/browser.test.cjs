@@ -131,8 +131,12 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#inspector-pick').click();
     await page.locator('#inspector-target').selectOption('0');
     await page.locator('#inspector-value').fill('New <safe> & clear');
+    await page.locator('#inspector-color').fill('#18c9e8');
+    await page.locator('#inspector-size').fill('28');
     await page.locator('#inspector-apply').click();
     assert.match(await editor.inputValue(), /New &lt;safe&gt; &amp; clear/, 'inspector safely updates source text');
+    assert.match(await editor.inputValue(), /color: #18c9e8/, 'inspector saves chosen color');
+    assert.match(await editor.inputValue(), /font-size: 28px/, 'inspector saves chosen font size');
     await page.locator('#reset').click();
     assert.match(await page.locator('#source').inputValue(), /Quick Notes|Star Catcher/i, 'reset loads starter');
     assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
