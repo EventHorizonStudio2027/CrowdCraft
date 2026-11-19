@@ -32,6 +32,16 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#studio-view').isVisible(), true, 'command palette navigates');
     const editor = page.locator('#source');
     assert.ok((await editor.inputValue()).length > 0, 'starter loads');
+    await page.locator('#editor-line').fill('2');
+    await page.locator('#editor-go-line').click();
+    assert.match(await page.locator('#editor-selection').innerText(), /Line 2/);
+    await editor.fill('alpha\\nbeta');
+    await editor.evaluate(el => el.setSelectionRange(0,0));
+    await page.locator('#editor-indent').click();
+    assert.match(await editor.inputValue(), /^  alpha/);
+    await page.locator('#editor-outdent').click();
+    assert.match(await editor.inputValue(), /^alpha/);
+    await page.locator('#reset').click();
     await page.locator('[data-snippet="loop"]').click();
     const source = await editor.inputValue();
     assert.ok(source.includes('\n'), 'inserted snippet contains real line breaks');
