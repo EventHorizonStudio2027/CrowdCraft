@@ -41,3 +41,5 @@ test('creation snippets and focus mode are available',()=>{assert.match(html,/cl
 test('document outline supports source navigation and filters',()=>{assert.match(html,/id="outline-list"/);assert.match(html,/data-filter="structure"/);assert.match(html,/data-filter="assets"/);assert.match(scripts[7],/setSelectionRange/);assert.match(scripts[7],/aria-pressed/);assert.match(scripts[7],/replaceChildren/);});
 
 test('project library filter and sort are connected',()=>{assert.match(html,/id="project-filter"/);assert.match(html,/id="project-sort"/);assert.match(html,/id="project-count"/);assert.match(scripts[2],/article\.dataset\.updated=p\.updated/);assert.match(scripts[8],/MutationObserver/);assert.match(scripts[8],/insertBefore/);});
+
+test('restore navigation, focus escape, and library empty state are wired',()=>{assert.match(html,/id="project-no-results"/);assert.match(html,/class="library-hint"/);assert.match(scripts[2],/source\.focus\(\)/);assert.match(scripts[6],/e\.key==='Escape'/);assert.match(scripts[8],/project-no-results/);});
