@@ -61,3 +61,5 @@ test('sandboxed preview text picking only trusts its own frame',()=>{assert.matc
 test('text picker ignores embedded code and supports Escape dismissal',()=>{assert.match(scripts[13],/const masked=html.replace/);assert.match(scripts[13],/script\|style\|template/);assert.match(scripts[13],/e.key==='Escape'&&picking/);});
 
 test('preview click interception is opt-in and does not affect normal gameplay',()=>{assert.match(scripts[0],/pickEnabled=false/);assert.match(scripts[0],/if\(!pickEnabled\)return/);assert.match(scripts[0],/e.preventDefault\(\)/);assert.match(scripts[13],/preview.addEventListener\('load'/);assert.match(scripts[13],/crowd-pick-mode/);});
+
+test('official brand treatment is wired to app shell and feature icons',()=>{assert.match(html,/assets\/brand-wordmark\.svg/);assert.match(html,/class="brand-showcase"/);assert.match(html,/class="header-wordmark"/);assert.match(html,/class="feature-icon"/);assert.match(html,/prefers-reduced-motion/);assert.match(html,/<symbol id="/);});
