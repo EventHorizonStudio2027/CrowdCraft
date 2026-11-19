@@ -106,6 +106,15 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('[data-view="projects"]').click();
     assert.match(await page.locator('#project-list').innerText(), /Browser test project/, 'saved library survives reload');
     await page.locator('[data-view="studio"]').click();
+    await editor.fill('<!doctype html><h1>Repeated</h1><h1>Repeated</h1>');
+    await page.locator('#text-inspector').evaluate(el => el.open = false);
+    await page.locator('#text-inspector summary').click();
+    await page.locator('#inspector-pick').click();
+    await page.locator('#preview-refresh').click();
+    await page.frameLocator('#preview').locator('h1').nth(1).click();
+    assert.equal(await page.locator('#inspector-target').inputValue(), '1', 'duplicate text selects clicked occurrence');
+    await page.locator('#inspector-pick').click();
+    await page.locator('#text-inspector').evaluate(el => el.open = false);
     await editor.fill('<!doctype html><title>Test</title><h1>Old heading</h1><p>Old paragraph</p>');
     await page.locator('#text-inspector summary').click();
     await page.locator('#inspector-pick').click();
