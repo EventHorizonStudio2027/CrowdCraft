@@ -58,6 +58,11 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#editor-focus').getAttribute('aria-pressed'), 'true');
     await page.keyboard.press('Escape');
     assert.equal(await page.locator('#editor-focus').getAttribute('aria-pressed'), 'false', 'Escape exits focus mode');
+    await page.locator('#visual-builder summary').click();
+    await page.locator('#builder-title').fill('Visual Builder Test');
+    await page.locator('#builder-generate').click();
+    assert.match(await editor.inputValue(), /Visual Builder Test/, 'visual builder generated source');
+    assert.match(await page.locator('#builder-status').innerText(), /generated/i);
     await page.waitForTimeout(450);
     const savedDraft = await editor.inputValue();
     await page.reload();
