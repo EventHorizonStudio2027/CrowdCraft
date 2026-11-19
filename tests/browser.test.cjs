@@ -17,10 +17,10 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     res.end(html);
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  let browser;
+  let browser, page;
   try {
     browser = await chromium.launch({ headless: true });
-    const page = await browser.newPage();
+    page = await browser.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
     page.on('dialog', dialog => dialog.accept());
@@ -130,6 +130,11 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.match(await page.locator('#source').inputValue(), /Quick Notes|Star Catcher/i, 'reset loads starter');
     assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
     assert.deepEqual(errors, [], 'no page errors');
+  } catch (error) {
+    if (page) {
+      try { fs.mkdirSync('test-artifacts', { recursive: true }); await page.screenshot({ path: 'test-artifacts/browser-failure.png', fullPage: true }); fs.writeFileSync('test-artifacts/error.txt', String(error.stack || error)); } catch {}
+    }
+    throw error;
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));
