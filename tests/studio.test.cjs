@@ -47,3 +47,5 @@ test('restore navigation, focus escape, and library empty state are wired',()=>{
 test('visual builder has safe replacement confirmation and editable controls',()=>{assert.match(html,/id="visual-builder"/);assert.match(html,/id="builder-generate"/);assert.match(html,/id="builder-color"/);assert.match(scripts[9],/confirm\(/);assert.match(scripts[9],/dispatchEvent/);assert.match(scripts[9],/replaceAll\('&','&amp;'\)/);});
 
 test('command palette and save state are wired',()=>{assert.match(html,/id="command-dialog"/);assert.match(html,/id="command-search"/);assert.match(html,/id="save-indicator"/);assert.match(scripts[10],/showModal\(\)/);assert.match(scripts[10],/metaKey\|\|e.ctrlKey/);assert.match(scripts[0],/clearTimeout\(timer\);source.value=starter/);});
+
+test('preview pause, manual refresh and viewport preference are connected',()=>{assert.match(html,/id="preview-pause"/);assert.match(html,/id="preview-state"/);assert.match(scripts[0],/__previewPaused/);assert.match(scripts[3],/viewportKey/);assert.match(scripts[3],/__previewForce=true/);assert.match(scripts[3],/render\(\)/);});
