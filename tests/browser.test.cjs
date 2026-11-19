@@ -86,7 +86,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await editor.inputValue(), beforeGeneration, 'undo restores source before generation');
     await page.locator('#builder-undo').click();
     assert.match(await editor.inputValue(), /Visual Builder Test/, 'undo toggles generated source back');
-    assert.match(await page.locator('#builder-status').innerText(), /generated/i);
+    assert.match(await page.locator('#builder-status').innerText(), /restored/i);
     await page.waitForTimeout(450);
     const savedDraft = await editor.inputValue();
     await page.reload();
