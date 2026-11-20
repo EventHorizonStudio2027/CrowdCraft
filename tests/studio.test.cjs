@@ -77,3 +77,5 @@ test('visual inspector provides bounded previous next element navigation',()=>{a
 test('visual inspector exposes undo and protects against stale source restoration',()=>{assert.match(html,/id="inspector-undo"/);assert.match(scripts[13],/undoSource=editor\.value/);assert.match(scripts[13],/internalEdit/);assert.match(scripts[13],/inspector-undo'\)\.addEventListener/);});
 
 test('preview picking refuses ambiguous duplicate occurrence and selection chip stays accessible',()=>{assert.match(html,/class="inspector-selection-chip" aria-live="polite"/);assert.match(scripts[13],/data\.occurrence\)\?data\.occurrence:-1/);assert.match(scripts[13],/preview\.addEventListener\('load'/);});
+
+test('preview picking cancels on source edits and exposes active state',()=>{assert.match(scripts[13],/!internalEdit&&picking&&editor\.value!==scanned/);assert.match(scripts[13],/Preview picking stopped because the source changed/);assert.match(html,/\.inspector-actions #inspector-pick\[aria-pressed="true"\]/);});
