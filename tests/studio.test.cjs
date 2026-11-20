@@ -119,3 +119,9 @@ test('preview picker bridge keeps selection CSS outside executable JavaScript',(
  assert.match(html,/!important\}<\/style><script>var pickEnabled=false/);
  assert.doesNotMatch(html,/<script><style>\[data-crowd-picked\]/);
 });
+
+test('preview picker bridge is injected before the user document closes',()=>{
+ assert.match(html,/const previewDocument=\/<\\/body\\s\*>\//);
+ assert.match(html,/source\.value\.replace\(\/<\\/body\\s\*>\//);
+ assert.match(html,/frame\.srcdoc=policy\+previewDocument/);
+});
