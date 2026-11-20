@@ -107,3 +107,9 @@ test('sandbox picker announces readiness after refresh and retains selection sty
  assert.match(html,/postMessage\(\{type:'crowd-pick-mode',enabled:picking\}/);
  assert.match(html,/box-shadow:0 0 0 6px rgba\(0,229,255,\.12\)/);
 });
+
+test('duplicate inspector options show occurrence and source line',()=>{
+ assert.match(html,/repeated element /);
+ assert.match(html,/\['\+repeated\+'\/'\+total\+'\]/);
+ assert.match(html,/option\.title='Source line '/);
+});
