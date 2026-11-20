@@ -125,3 +125,15 @@ test('preview picker bridge is injected before the user document closes',()=>{
  assert.ok(html.includes("source.value.replace(/<\\/body\\s*>/i,pickBridge+'</body>')"));
  assert.ok(html.includes('frame.srcdoc=policy+previewDocument'));
 });
+
+test('preview selection bridge validates parent messages and identifies repeated elements',()=>{
+ assert.ok(html.includes('if(e.source!==parent)return'));
+ assert.ok(html.includes('parent.postMessage({type:"crowd-preview-ready"}'));
+ assert.ok(html.includes('occurrence:Array.from(document.querySelectorAll(el.tagName.toLowerCase()))'));
+ assert.ok(html.includes("event.origin==='null'"));
+});
+test('inspector responsive layout retains accessible selected state',()=>{
+ assert.ok(html.includes('id="inspector-layout-refinement"'));
+ assert.ok(html.includes('id="inspector-selection-polish"'));
+ assert.ok(html.includes('data-selected="true"'));
+});
