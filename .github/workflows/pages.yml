@@ -34,6 +34,13 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Run Chromium browser regression suite
         run: node --test tests/browser.test.cjs
+      - name: Upload browser failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-test-failure
+          path: test-artifacts/
+          if-no-files-found: ignore
       - uses: actions/configure-pages@v5
       - name: Prepare static site
         run: |
