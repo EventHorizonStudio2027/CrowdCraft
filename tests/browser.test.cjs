@@ -16,7 +16,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
       res.end(fs.readFileSync(file));
       return;
     }
-    if (req.url !== '/') { res.writeHead(404); res.end('Not found'); return; }
+    if (!/^\/(?:\?[^#]*)?$/.test(req.url || '')) { res.writeHead(404); res.end('Not found'); return; }
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.end(html);
   });
