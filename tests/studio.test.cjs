@@ -81,3 +81,5 @@ test('preview picking refuses ambiguous duplicate occurrence and selection chip 
 test('preview picking cancels on source edits and exposes active state',()=>{assert.match(scripts[13],/!internalEdit&&picking&&editor\.value!==scanned/);assert.match(scripts[13],/Preview picking stopped because the source changed/);assert.match(html,/\.inspector-actions #inspector-pick\[aria-pressed="true"\]/);});
 
 test('preview picker retains complete text and selected chip has an active state',()=>{assert.doesNotMatch(scripts[0],/text:el\.textContent\.slice\(0,400\)/);assert.match(scripts[0],/text:el\.textContent,occurrence:/);assert.match(scripts[13],/dataset\.selected=String/);assert.match(html,/inspector-selection-chip\[data-selected="true"\]/);});
+
+test('sandbox preview picker validates message origin and exposes a visible selection mode',()=>{assert.match(scripts[13],/event\.origin!==\x27null\x27/);assert.match(html,/Selection mode · Click text to edit/);assert.match(html,/\.preview-pick-banner:not\(\[hidden\]\)/);});
