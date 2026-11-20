@@ -6,7 +6,7 @@ const vm=require('node:vm');
 const html=fs.readFileSync('index.html','utf8');
 const scripts=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)].map(m=>m[1]);
 test('studio inline scripts compile as valid JavaScript',()=>{
- assert.equal(scripts.length,14);
+ assert.equal(scripts.length,16);
  for(const [i,script] of scripts.entries())assert.doesNotThrow(()=>new vm.Script(script,{filename:'studio-inline-'+i+'.js'}));
 });
 test('studio uses isolated preview and restrictive content security policy',()=>{
