@@ -229,6 +229,11 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('.outline-filter[data-filter="content"]').click();
     await page.locator('.outline-item').filter({hasText:'Readable paragraph'}).waitFor();
     assert.ok(await page.locator('.outline-item').filter({hasText:'Readable paragraph'}).count(), 'text filter exposes paragraphs');
+    await editor.fill('<button id="launch">Launch</button><p>Readable paragraph</p>');
+    await page.locator('.outline-filter[data-filter="interactive"]').click();
+    assert.equal(await page.locator('.outline-item').count(), 1, 'interactive filter isolates controls');
+    await page.locator('.outline-item').first().click();
+    assert.match(await editor.evaluate(el=>el.value.slice(el.selectionStart,el.selectionEnd)), /^<button id="launch">/, 'interactive element jumps to markup');
     await page.locator('.outline-filter[data-filter="all"]').click();
     await editor.fill('<!doctype html>\n<section class="hero-layout featured">Example</section>');
     await page.locator('#outline-search').fill('featured');
