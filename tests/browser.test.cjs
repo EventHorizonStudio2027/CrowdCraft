@@ -215,7 +215,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.deepEqual(errors, [], 'no page errors');
   } catch (error) {
     if (page) {
-      try { fs.mkdirSync('test-artifacts', { recursive: true }); await page.screenshot({ path: 'test-artifacts/browser-failure.png', fullPage: true }); fs.writeFileSync('test-artifacts/error.txt', String(error.stack || error)); } catch {}
+      try { fs.mkdirSync('test-artifacts', { recursive: true }); await page.screenshot({ path: 'test-artifacts/browser-failure.png', fullPage: true }); fs.writeFileSync('test-artifacts/error.txt', String(error.stack || error) + '\nURL: ' + page.url() + '\n'); } catch {}
     }
     throw error;
   } finally {
