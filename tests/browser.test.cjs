@@ -29,6 +29,15 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     page.on('pageerror', e => errors.push(e.message));
     page.on('dialog', dialog => dialog.accept());
     await page.goto('http://127.0.0.1:' + server.address().port);
+    await page.locator('#showrunner-name').fill('Captain Nova');
+    await page.locator('#showrunner-icon').selectOption('🎮');
+    await page.locator('#contributor-name').fill('PixelPilot');
+    assert.match(await page.locator('#showrunner-display').innerText(), /Captain Nova · Showrunner/);
+    assert.match(await page.locator('#contributor-display').innerText(), /PixelPilot · Contributor/);
+    await page.reload();
+    assert.equal(await page.locator('#showrunner-name').inputValue(), 'Captain Nova', 'showrunner display name survives reload');
+    assert.equal(await page.locator('#showrunner-icon').inputValue(), '🎮', 'showrunner icon survives reload');
+    assert.equal(await page.locator('#contributor-name').inputValue(), 'PixelPilot', 'contributor name survives reload');
     for (const path of ['assets/logo.svg', 'assets/brand-wordmark.svg']) {
       const image = page.locator('img[src="' + path + '"]').first();
       assert.equal(await image.evaluate(el => el.complete && el.naturalWidth > 0), true, path + ' loads as a real image');
