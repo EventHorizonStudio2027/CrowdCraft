@@ -195,6 +195,14 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.doesNotMatch(await editor.inputValue(), /Second revision/, 'undo restores source before last inspector edit');
     assert.match(await editor.inputValue(), /New &lt;safe&gt; &amp; clear/, 'undo retains preceding inspector revision');
     assert.equal(await page.locator('#inspector-undo').isDisabled(), true, 'single-step undo cannot repeat');
+    const longText = 'Long preview text '.repeat(30);
+    await editor.fill('<!doctype html><p>' + longText + '</p>');
+    await page.locator('#inspector-pick').click();
+    await page.locator('#preview-refresh').click();
+    await page.frameLocator('#preview').locator('p').click();
+    assert.equal(await page.locator('#inspector-target').inputValue(), '0', 'long preview text remains selectable');
+    assert.equal(await page.locator('#inspector-value').inputValue(), longText, 'long preview selection retains full text');
+    await page.locator('#inspector-pick').click();
     await page.locator('#reset').click();
     assert.match(await page.locator('#source').inputValue(), /Quick Notes|Star Catcher/i, 'reset loads starter');
     assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
