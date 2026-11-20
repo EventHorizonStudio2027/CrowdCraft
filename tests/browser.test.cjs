@@ -225,6 +225,10 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
     await editor.fill('<!doctype html>\n<h1 id="outline-check">Outline test</h1>');
     await page.locator('.outline-item').filter({hasText:'outline-check'}).waitFor();
+    await page.locator('#outline-search').fill('no-such-element');
+    assert.equal(await page.locator('.outline-item').count(), 0, 'outline search filters unmatched elements');
+    await page.locator('#outline-clear').click();
+    assert.equal(await page.locator('#outline-search').inputValue(), '', 'outline search clear resets filter');
     await page.locator('.outline-item').filter({hasText:'outline-check'}).click();
     assert.match(await editor.evaluate(el=>el.value.slice(el.selectionStart,el.selectionEnd)), /^<h1 id="outline-check">/, 'outline selects opening markup');
     assert.equal(await page.locator('#editor-line').inputValue(), '2', 'outline updates go-to-line field');
