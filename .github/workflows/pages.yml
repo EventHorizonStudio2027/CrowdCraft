@@ -6,6 +6,7 @@ on:
       - 'index.html'
       - 'assets/**'
       - 'tests/studio.test.cjs'
+      - 'tests/browser.test.cjs'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
