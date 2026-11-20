@@ -85,3 +85,18 @@ test('preview picker retains complete text and selected chip has an active state
 test('sandbox preview picker validates message origin and exposes a visible selection mode',()=>{assert.match(scripts[13],/event\.origin!==\x27null\x27/);assert.match(html,/Selection mode · Click text to edit/);assert.match(html,/\.preview-pick-banner:not\(\[hidden\]\)/);});
 
 test('inspector source-line tooltip and reset remain synchronized',()=>{assert.match(scripts[13],/Source line /);assert.match(scripts[13],/\.title='No element selected'/);assert.match(scripts[13],/dataset\.selected=String/);});
+
+test('browser validation and Pages deployment use a supported pinned Linux runner',()=>{
+ for(const path of ['.github/workflows/validate.yml','.github/workflows/pages.yml']){
+  const workflow=fs.readFileSync(path,'utf8');
+  assert.match(workflow,/runs-on:\s*ubuntu-24\.04/,path);
+  assert.doesNotMatch(workflow,/runs-on:\s*ubuntu-latest/,path);
+  assert.match(workflow,/playwright install --with-deps chromium/,path);
+ }
+});
+test('visual inspector exposes accessible focus and reduced motion',()=>{
+ assert.match(html,/id="studio-inspector-polish"/);
+ assert.match(html,/#text-inspector:focus-within/);
+ assert.match(html,/#text-inspector button:focus-visible/);
+ assert.match(html,/prefers-reduced-motion:reduce/);
+});
