@@ -225,6 +225,11 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
     await editor.fill('<!doctype html>\n<h1 id="outline-check">Outline test</h1>');
     await page.locator('.outline-item').filter({hasText:'outline-check'}).waitFor();
+    await editor.fill('<!doctype html>\n<h1 id="outline-check">Outline test</h1><p>Readable paragraph</p>');
+    await page.locator('.outline-filter[data-filter="content"]').click();
+    await page.locator('.outline-item').filter({hasText:'Readable paragraph'}).waitFor();
+    assert.ok(await page.locator('.outline-item').filter({hasText:'Readable paragraph'}).count(), 'text filter exposes paragraphs');
+    await page.locator('.outline-filter[data-filter="all"]').click();
     await page.locator('#outline-search').fill('no-such-element');
     assert.equal(await page.locator('.outline-item').count(), 0, 'outline search filters unmatched elements');
     await page.locator('#outline-clear').click();
