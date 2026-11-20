@@ -210,6 +210,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#inspector-pick').click();
     await page.locator('#preview-refresh').click();
     await page.frameLocator('#preview').locator('p').click();
+    await page.waitForFunction(() => document.getElementById('inspector-target').value === '0', null, {timeout: 5000});
     assert.equal(await page.locator('#inspector-target').inputValue(), '0', 'long preview text remains selectable');
     assert.equal(await page.locator('#inspector-value').inputValue(), longText, 'long preview selection retains full text');
     await page.locator('#inspector-pick').click();
