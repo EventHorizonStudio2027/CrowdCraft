@@ -83,3 +83,5 @@ test('preview picking cancels on source edits and exposes active state',()=>{ass
 test('preview picker retains complete text and selected chip has an active state',()=>{assert.doesNotMatch(scripts[0],/text:el\.textContent\.slice\(0,400\)/);assert.match(scripts[0],/text:el\.textContent,occurrence:/);assert.match(scripts[13],/dataset\.selected=String/);assert.match(html,/inspector-selection-chip\[data-selected="true"\]/);});
 
 test('sandbox preview picker validates message origin and exposes a visible selection mode',()=>{assert.match(scripts[13],/event\.origin!==\x27null\x27/);assert.match(html,/Selection mode · Click text to edit/);assert.match(html,/\.preview-pick-banner:not\(\[hidden\]\)/);});
+
+test('inspector source-line tooltip and reset remain synchronized',()=>{assert.match(scripts[13],/Source line /);assert.match(scripts[13],/\.title='No element selected'/);assert.match(scripts[13],/dataset\.selected=String/);});
