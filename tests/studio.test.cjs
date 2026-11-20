@@ -121,7 +121,7 @@ test('preview picker bridge keeps selection CSS outside executable JavaScript',(
 });
 
 test('preview picker bridge is injected before the user document closes',()=>{
- assert.match(html,/const previewDocument=\/<\\/body\\s\*>\//);
- assert.match(html,/source\.value\.replace\(\/<\\/body\\s\*>\//);
- assert.match(html,/frame\.srcdoc=policy\+previewDocument/);
+ assert.ok(html.includes('const previewDocument='));
+ assert.ok(html.includes("source.value.replace(/<\\/body\\s*>/i,pickBridge+'</body>')"));
+ assert.ok(html.includes('frame.srcdoc=policy+previewDocument'));
 });
