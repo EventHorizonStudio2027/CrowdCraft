@@ -45,3 +45,12 @@ Hide or label dashboard vanity metrics, Community, AI, publishing, cloud sync, l
 
 ### External dependencies and escalation
 Real AI requires a chosen model provider, server-side secret storage and a hosted API; collaborative sessions require a backend, persistence and identity/session rules; livestream participation requires platform integration and OAuth. Surface user-required account/billing/authorization actions immediately, but build and test all independent work first.
+
+### Session authority: one Showrunner
+- Exactly **one Showrunner** (the main streamer/MC) owns the active session and final creative decisions.
+- Audience members are **Contributors**: submit requests, proposals, ideas, code or creative assets and vote on priorities. They cannot directly modify or publish the canonical project.
+- The **AI Builder** may draft implementation proposals and test them, but only Showrunner-approved changes may be applied to the canonical project.
+- Submission lifecycle: **submitted → shortlisted → approved/rejected → implemented → tested → published**. Rejected proposals remain visible in history where appropriate.
+- The Showrunner can merge ideas, request revisions, moderate submissions, and roll back approved changes. Votes are advisory, not binding.
+- Host transfer is an explicit authenticated action; no silent takeover or multiple simultaneous owners. Reconnect must preserve session state.
+- MVP should prioritize a functioning submission queue and Showrunner approval gate before external livestream/OAuth integrations.
