@@ -134,6 +134,10 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#inspector-target').selectOption('0');
     await page.locator('#inspector-jump').click();
     assert.ok((await editor.evaluate(el => el.selectionEnd - el.selectionStart)) > 0, 'source jump highlights selected markup');
+    assert.ok(Number(await page.locator('#editor-line').inputValue()) >= 1, 'source jump synchronizes line navigation');
+    await page.locator('#inspector-target').focus();
+    await page.keyboard.press('Alt+Enter');
+    assert.ok((await editor.evaluate(el => el.selectionEnd - el.selectionStart)) > 0, 'keyboard shortcut jumps to selected source');
     await page.frameLocator('#preview').locator('h1:first-of-type[data-crowd-picked]').waitFor();
     assert.equal(await page.frameLocator('#preview').locator('h1').first().getAttribute('data-crowd-picked'), '', 'first duplicate can be selected separately');
     assert.equal(await page.frameLocator('#preview').locator('h1').nth(1).getAttribute('data-crowd-picked'), null, 'second duplicate clears when first is selected');
