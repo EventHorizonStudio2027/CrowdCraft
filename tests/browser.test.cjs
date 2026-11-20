@@ -38,6 +38,19 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#showrunner-name').inputValue(), 'Captain Nova', 'showrunner display name survives reload');
     assert.equal(await page.locator('#showrunner-icon').inputValue(), '🎮', 'showrunner icon survives reload');
     assert.equal(await page.locator('#contributor-name').inputValue(), 'PixelPilot', 'contributor name survives reload');
+    await page.locator('#proposal-text').fill('Add a working leaderboard');
+    await page.locator('#proposal-form button[type="submit"]').click();
+    assert.match(await page.locator('#proposal-count').innerText(), /1 pending/);
+    assert.match(await page.locator('.proposal-card').first().innerText(), /PixelPilot/);
+    await page.reload();
+    assert.match(await page.locator('.proposal-card').first().innerText(), /Add a working leaderboard/, 'submission survives reload');
+    await page.locator('.proposal-card button[data-decision="approved"]').first().click();
+    assert.match(await page.locator('#proposal-count').innerText(), /0 pending/);
+    await page.locator('#proposal-filter').selectOption('approved');
+    assert.match(await page.locator('.proposal-card').first().innerText(), /Captain Nova/, 'host decision is attributed');
+    await page.reload();
+    await page.locator('#proposal-filter').selectOption('approved');
+    assert.match(await page.locator('.proposal-card').first().innerText(), /approved/, 'approval survives reload');
     for (const path of ['assets/logo.svg', 'assets/brand-wordmark.svg']) {
       const image = page.locator('img[src="' + path + '"]').first();
       assert.equal(await image.evaluate(el => el.complete && el.naturalWidth > 0), true, path + ' loads as a real image');
