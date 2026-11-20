@@ -116,6 +116,6 @@ test('duplicate inspector options show occurrence and source line',()=>{
 
 test('preview picker bridge keeps selection CSS outside executable JavaScript',()=>{
  assert.match(html,/const pickBridge='<style>\[data-crowd-picked\]/);
- assert.match(html,/!important<\/style><script>var pickEnabled=false/);
+ assert.match(html,/!important\}<\/style><script>var pickEnabled=false/);
  assert.doesNotMatch(html,/<script><style>\[data-crowd-picked\]/);
 });
