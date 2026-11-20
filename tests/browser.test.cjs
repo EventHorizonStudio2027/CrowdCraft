@@ -121,6 +121,8 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#preview-refresh').click();
     await page.frameLocator('#preview').locator('h1').nth(1).click();
     assert.equal(await page.locator('#inspector-target').inputValue(), '1', 'duplicate text selects clicked occurrence');
+    await page.evaluate(() => window.dispatchEvent(new MessageEvent('message', {source: document.getElementById('preview').contentWindow, origin: 'https://untrusted.example', data: {type:'crowd-text-pick',tag:'h1',text:'Repeated',occurrence:0}})));
+    assert.equal(await page.locator('#inspector-target').inputValue(), '1', 'picker ignores forged non-sandbox-origin messages');
     assert.equal(await page.locator('#inspector-picked').getAttribute('data-selected'), 'true', 'selected element chip confirms active selection');
     await page.frameLocator('#preview').locator('h1[data-crowd-picked]').waitFor();
     assert.equal(await page.frameLocator('#preview').locator('h1').nth(1).getAttribute('data-crowd-picked'), '', 'clicked duplicate receives selection highlight');
