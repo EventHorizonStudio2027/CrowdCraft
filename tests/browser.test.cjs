@@ -127,6 +127,9 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#preview-refresh').click();
     await page.frameLocator('#preview').locator('h1').nth(1).waitFor();
     assert.equal(await page.locator('#inspector-target').inputValue(), '1', 'preview refresh preserves selected duplicate');
+    await page.frameLocator('#preview').locator('h1').nth(1).waitFor({state:'visible'});
+    await page.waitForTimeout(150);
+    assert.equal(await page.frameLocator('#preview').locator('h1').nth(1).getAttribute('data-crowd-picked'), '', 'preview refresh restores duplicate highlight');
     await page.locator('#inspector-pick').click();
     await page.locator('#text-inspector').evaluate(el => el.open = false);
     await editor.fill('<!doctype html><title>Test</title><h1>Old heading</h1><p>Old paragraph</p>');
