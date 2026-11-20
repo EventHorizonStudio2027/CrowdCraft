@@ -222,12 +222,13 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#inspector-pick').click();
     await page.locator('#reset').click();
     assert.match(await page.locator('#source').inputValue(), /Quick Notes|Star Catcher/i, 'reset loads starter');
+    assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
     await editor.fill('<!doctype html>\n<h1 id="outline-check">Outline test</h1>');
     await page.locator('.outline-item').filter({hasText:'outline-check'}).waitFor();
     await page.locator('.outline-item').filter({hasText:'outline-check'}).click();
     assert.match(await editor.evaluate(el=>el.value.slice(el.selectionStart,el.selectionEnd)), /^<h1 id="outline-check">/, 'outline selects opening markup');
     assert.equal(await page.locator('#editor-line').inputValue(), '2', 'outline updates go-to-line field');
-    assert.match(await page.locator('#save-indicator').innerText(), /Saved locally/);
+    
     assert.deepEqual(errors, [], 'no page errors');
   } catch (error) {
     if (page) {
