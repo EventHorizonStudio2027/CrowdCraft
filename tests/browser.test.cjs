@@ -130,7 +130,9 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.frameLocator('#preview').locator('h1').nth(1).waitFor({state:'visible'});
     await page.waitForTimeout(150);
     assert.equal(await page.frameLocator('#preview').locator('h1').nth(1).getAttribute('data-crowd-picked'), '', 'preview refresh restores duplicate highlight');
-    await page.locator('#inspector-pick').click();
+    await editor.fill('<!doctype html><h1>Updated while picking</h1>');
+    assert.equal(await page.locator('#inspector-pick').getAttribute('aria-pressed'), 'false', 'source edit automatically exits stale picking mode');
+    assert.equal(await page.locator('#preview-pick-banner').isHidden(), true, 'stale pick banner disappears');
     await page.locator('#text-inspector').evaluate(el => el.open = false);
     await editor.fill('<!doctype html><title>Test</title><h1>Old heading</h1><p>Old paragraph</p>');
     await page.locator('#text-inspector summary').click();
