@@ -125,7 +125,7 @@ test('preview picker bridge is installed before page content can be clicked',()=
  assert.ok(html.includes("source.value.replace(/<\\/head\\s*>/i,pickBridge+'</head>')"));
  assert.ok(html.includes("source.value.replace(/<body\\b[^>]*>/i,match=>match+pickBridge)"));
  assert.ok(html.includes("'<head>'+pickBridge+'</head>'+source.value"));
- assert.ok(html.includes('frame.srcdoc=policy+previewDocument'));
+ assert.ok(html.includes('frame.srcdoc=previewDocument'));
 });
 
 test('preview selection bridge validates parent messages and identifies repeated elements',()=>{
@@ -138,4 +138,11 @@ test('inspector responsive layout retains accessible selected state',()=>{
  assert.ok(html.includes('id="inspector-layout-refinement"'));
  assert.ok(html.includes('id="inspector-selection-polish"'));
  assert.ok(html.includes('data-selected="true"'));
+});
+
+test('preview security policy is installed inside the document head, not before the doctype',()=>{
+ assert.ok(html.includes("const pickBridge='<meta http-equiv=\\\"Content-Security-Policy\\\""));
+ assert.ok(html.includes("script-src \\\'unsafe-inline\\\'; style-src \\\'unsafe-inline\\\'"));
+ assert.ok(html.includes('frame.srcdoc=previewDocument'));
+ assert.doesNotMatch(html,/frame\.srcdoc=policy\+previewDocument/);
 });
