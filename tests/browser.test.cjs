@@ -120,6 +120,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#inspector-pick').click();
     await page.locator('#preview-refresh').click();
     await page.frameLocator('#preview').locator('h1').nth(1).click();
+    await page.waitForFunction(expected => document.getElementById('inspector-target').value === expected, '1', {timeout: 5000});
     assert.equal(await page.locator('#inspector-target').inputValue(), '1', 'duplicate text selects clicked occurrence');
     await page.evaluate(() => window.dispatchEvent(new MessageEvent('message', {source: document.getElementById('preview').contentWindow, origin: 'https://untrusted.example', data: {type:'crowd-text-pick',tag:'h1',text:'Repeated',occurrence:0}})));
     assert.equal(await page.locator('#inspector-target').inputValue(), '1', 'picker ignores forged non-sandbox-origin messages');
@@ -148,6 +149,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#inspector-pick').click();
     await page.locator('#preview-refresh').click();
     await page.frameLocator('#preview').locator('h1').click();
+    await page.waitForFunction(expected => document.getElementById('inspector-target').value === expected, '0', {timeout: 5000});
     assert.equal(await page.locator('#inspector-target').inputValue(), '0', 'preview click selects heading');
     await page.locator('#inspector-pick').click();
     await page.locator('#inspector-target').selectOption('0');
