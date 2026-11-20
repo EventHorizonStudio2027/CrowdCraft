@@ -230,6 +230,15 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('.outline-item').filter({hasText:'Readable paragraph'}).waitFor();
     assert.ok(await page.locator('.outline-item').filter({hasText:'Readable paragraph'}).count(), 'text filter exposes paragraphs');
     await page.locator('.outline-filter[data-filter="all"]').click();
+    await editor.fill('<!doctype html>\n<section class="hero-layout featured">Example</section>');
+    await page.locator('#outline-search').fill('featured');
+    await page.locator('.outline-item').filter({hasText:'.hero-layout.featured'}).waitFor();
+    assert.equal(await page.locator('.outline-item').count(), 1, 'outline searches CSS classes');
+    await page.locator('#outline-clear').click();
+    await editor.fill('<!doctype html>\n'+Array.from({length:125},(_,i)=>'<section id="section-'+i+'"></section>').join(''));
+    await page.waitForFunction(()=>document.getElementById('outline-count').textContent.includes('125 elements'));
+    assert.equal(await page.locator('.outline-item').count(), 120, 'outline caps rendered entries while retaining accurate count');
+    await editor.fill('<!doctype html>\n<h1 id="outline-check">Outline test</h1><p>Readable paragraph</p>');
     await page.locator('#outline-search').fill('no-such-element');
     assert.equal(await page.locator('.outline-item').count(), 0, 'outline search filters unmatched elements');
     await page.locator('#outline-clear').click();
