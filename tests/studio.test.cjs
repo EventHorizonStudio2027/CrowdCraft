@@ -75,3 +75,5 @@ test('background styling and reset controls are wired into the visual inspector'
 test('visual inspector provides bounded previous next element navigation',()=>{assert.match(html,/id="inspector-prev"/);assert.match(html,/id="inspector-next"/);assert.match(html,/id="inspector-count"/);assert.match(scripts[13],/previous\.addEventListener\('click'/);assert.match(scripts[13],/next\.addEventListener\('click'/);});
 
 test('visual inspector exposes undo and protects against stale source restoration',()=>{assert.match(html,/id="inspector-undo"/);assert.match(scripts[13],/undoSource=editor\.value/);assert.match(scripts[13],/internalEdit/);assert.match(scripts[13],/inspector-undo'\)\.addEventListener/);});
+
+test('preview picking refuses ambiguous duplicate occurrence and selection chip stays accessible',()=>{assert.match(html,/class="inspector-selection-chip" aria-live="polite"/);assert.match(scripts[13],/data\.occurrence\)\?data\.occurrence:-1/);assert.match(scripts[13],/preview\.addEventListener\('load'/);});
