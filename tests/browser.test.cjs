@@ -175,7 +175,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#inspector-background').inputValue(), '#16324a', 'reset restores selected element background');
     assert.equal(await editor.inputValue(), revisedSource, 'reset does not mutate source');
     assert.equal(await page.locator('#inspector-undo').isDisabled(), false, 'undo available after visual edits');
-    await page.locator('#inspector-undo').click();
+    await page.keyboard.press('Control+Alt+z');
     assert.doesNotMatch(await editor.inputValue(), /Second revision/, 'undo restores source before last inspector edit');
     assert.match(await editor.inputValue(), /New &lt;safe&gt; &amp; clear/, 'undo retains preceding inspector revision');
     assert.equal(await page.locator('#inspector-undo').isDisabled(), true, 'single-step undo cannot repeat');
