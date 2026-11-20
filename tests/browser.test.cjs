@@ -141,6 +141,9 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#inspector-target').inputValue(), '0', 'previous restores prior element');
     await page.frameLocator('#preview').locator('h1[data-crowd-picked]').waitFor();
     assert.equal(await page.frameLocator('#preview').locator('h1').first().getAttribute('data-crowd-picked'), '', 'dropdown selection highlights matching preview element');
+    await page.locator('#inspector-apply').click();
+    assert.equal(await page.locator('#inspector-undo').isDisabled(), true, 'unchanged inspector apply does not create undo history');
+    assert.match(await page.locator('#inspector-status').innerText(), /No changes to apply/, 'unchanged inspector apply gives clear feedback');
     await page.locator('#inspector-value').fill('New <safe> & clear');
     await page.locator('#inspector-color').fill('#18c9e8');
     await page.locator('#inspector-size').fill('28');
