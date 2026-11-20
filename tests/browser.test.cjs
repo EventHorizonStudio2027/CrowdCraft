@@ -65,6 +65,8 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#preview').evaluate(el => el.srcdoc), pausedHtml, 'paused preview remains unchanged');
     await page.locator('#preview-refresh').click();
     assert.match(await page.locator('#preview').evaluate(el => el.srcdoc), /Paused update/, 'manual refresh renders latest source');
+    await page.waitForFunction(() => !document.getElementById('preview-refresh').hasAttribute('aria-busy'));
+    assert.equal(await page.locator('#preview-refresh').getAttribute('aria-busy'), null, 'refresh progress resets when iframe loads');
     await page.locator('#preview-pause').click();
     assert.equal(await page.locator('#preview-pause').getAttribute('aria-pressed'), 'false');
     await editor.fill(source);
