@@ -124,6 +124,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.evaluate(() => window.dispatchEvent(new MessageEvent('message', {source: document.getElementById('preview').contentWindow, origin: 'https://untrusted.example', data: {type:'crowd-text-pick',tag:'h1',text:'Repeated',occurrence:0}})));
     assert.equal(await page.locator('#inspector-target').inputValue(), '1', 'picker ignores forged non-sandbox-origin messages');
     assert.equal(await page.locator('#inspector-picked').getAttribute('data-selected'), 'true', 'selected element chip confirms active selection');
+    assert.match(await page.locator('#inspector-picked').getAttribute('title'), /^Source line \d+$/, 'selected element exposes its source line');
     await page.frameLocator('#preview').locator('h1[data-crowd-picked]').waitFor();
     assert.equal(await page.frameLocator('#preview').locator('h1').nth(1).getAttribute('data-crowd-picked'), '', 'clicked duplicate receives selection highlight');
     assert.equal(await page.frameLocator('#preview').locator('h1').first().getAttribute('data-crowd-picked'), null, 'other duplicate is not highlighted');
@@ -181,6 +182,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#inspector-apply').isDisabled(), false, 'inspector remains ready for another edit');
     await page.locator('#inspector-refresh').click();
     assert.equal(await page.locator('#inspector-picked').getAttribute('data-selected'), 'false', 'rescan clears selected-element chip');
+    assert.equal(await page.locator('#inspector-picked').getAttribute('title'), 'No element selected', 'rescan clears source line tooltip');
     await page.locator('#inspector-target').selectOption('0');
     await page.locator('#inspector-value').fill('Second revision');
     await page.locator('#inspector-apply').click();
