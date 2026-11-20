@@ -147,3 +147,9 @@ test('preview security policy is installed in the head before page scripts execu
  assert.ok(html.includes('frame.srcdoc=previewDocument'));
  assert.doesNotMatch(html,/frame\\.srcdoc=policy\\+previewDocument/);
 });
+
+test('picker mode re-arms on iframe load and hidden banner remains hidden',()=>{
+ assert.ok(html.includes("preview.addEventListener('load',()=>{if(picking)"));
+ assert.ok(html.includes("type:'crowd-pick-mode',enabled:true"));
+ assert.ok(html.includes('#preview-pick-banner[hidden]{display:none!important}'));
+});
