@@ -8,9 +8,12 @@ const { chromium } = require('playwright');
 test('browser studio workflow: editor, snippets, project recovery and viewport', async () => {
   const html = fs.readFileSync('index.html', 'utf8');
   const server = http.createServer((req, res) => {
-    if (req.url === '/assets/logo.svg' || req.url === '/assets/brand-wordmark.svg') {
-      res.setHeader('Content-Type', 'image/svg+xml');
-      res.end(fs.readFileSync('.' + req.url));
+    if (/^\/assets\/[a-z0-9._-]+\.(svg|png|webp|jpg)$/i.test(req.url || '')) {
+      const file = '.' + req.url;
+      if (!fs.existsSync(file)) { res.writeHead(404); res.end('Asset not found'); return; }
+      const ext = file.split('.').pop().toLowerCase();
+      res.setHeader('Content-Type', ({svg:'image/svg+xml',png:'image/png',webp:'image/webp',jpg:'image/jpeg'})[ext]);
+      res.end(fs.readFileSync(file));
       return;
     }
     if (req.url !== '/') { res.writeHead(404); res.end('Not found'); return; }
