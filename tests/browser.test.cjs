@@ -180,6 +180,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.locator('#inspector-target').inputValue(), '0', 'selection remains active after apply');
     assert.equal(await page.locator('#inspector-apply').isDisabled(), false, 'inspector remains ready for another edit');
     await page.locator('#inspector-refresh').click();
+    assert.equal(await page.locator('#inspector-picked').getAttribute('data-selected'), 'false', 'rescan clears selected-element chip');
     await page.locator('#inspector-target').selectOption('0');
     await page.locator('#inspector-value').fill('Second revision');
     await page.locator('#inspector-apply').click();
