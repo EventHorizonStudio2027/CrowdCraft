@@ -28,6 +28,12 @@ jobs:
           node-version: '22'
       - name: Validate studio before publishing
         run: node --test tests/studio.test.cjs
+      - name: Install browser test dependencies
+        run: |
+          npm install --no-save playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Run Chromium browser regression suite
+        run: node --test tests/browser.test.cjs
       - uses: actions/configure-pages@v5
       - name: Prepare static site
         run: |
