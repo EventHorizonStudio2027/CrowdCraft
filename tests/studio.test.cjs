@@ -100,3 +100,10 @@ test('visual inspector exposes accessible focus and reduced motion',()=>{
  assert.match(html,/#text-inspector button:focus-visible/);
  assert.match(html,/prefers-reduced-motion:reduce/);
 });
+
+test('sandbox picker announces readiness after refresh and retains selection styling',()=>{
+ assert.match(html,/crowd-preview-ready/);
+ assert.match(html,/event\.data\?\.type==='crowd-preview-ready'/);
+ assert.match(html,/postMessage\(\{type:'crowd-pick-mode',enabled:picking\}/);
+ assert.match(html,/box-shadow:0 0 0 6px rgba\(0,229,255,\.12\)/);
+});
