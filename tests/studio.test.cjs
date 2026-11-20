@@ -149,11 +149,11 @@ test('preview security policy is installed in the head before page scripts execu
 });
 
 test('picker mode re-arms on iframe load and hidden banner remains hidden',()=>{
- assert.ok(html.includes("preview.addEventListener('load',()=>{if(picking)"));
+ assert.ok(html.includes("preview.addEventListener('load',()=>{document.getElementById('preview-refresh').removeAttribute('aria-busy');if(picking)"));
  assert.ok(html.includes("type:'crowd-pick-mode',enabled:true"));
  assert.ok(html.includes('#preview-pick-banner[hidden]{display:none!important}'));
 });
 
 test('manual refresh cancels pending autosave rerender before replacing iframe',()=>{
- assert.ok(html.includes("document.getElementById('preview-refresh').addEventListener('click',()=>{clearTimeout(timer);save();window.__previewForce=true;"));
+ assert.ok(html.includes("document.getElementById('preview-refresh').addEventListener('click',()=>{document.getElementById('preview-refresh').setAttribute('aria-busy','true');clearTimeout(timer);save();window.__previewForce=true;"));
 });
