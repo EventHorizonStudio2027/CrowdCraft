@@ -54,3 +54,14 @@ Real AI requires a chosen model provider, server-side secret storage and a hoste
 - The Showrunner can merge ideas, request revisions, moderate submissions, and roll back approved changes. Votes are advisory, not binding.
 - Host transfer is an explicit authenticated action; no silent takeover or multiple simultaneous owners. Reconnect must preserve session state.
 - MVP should prioritize a functioning submission queue and Showrunner approval gate before external livestream/OAuth integrations.
+
+### Future streaming-platform integrations (architecture requirement)
+Build a **platform-neutral session and proposal engine** with versioned adapters, not a Twitch-only or YouTube-only application. Target Twitch, YouTube Live, Kick, TikTok LIVE, Facebook Live, Discord community participation, and additional services as official APIs and permissions permit. No claim of existing integrations until verified.
+
+- Normalize platform events into internal `viewer.joined`, `proposal.submitted`, `vote.cast`, `moderation.flagged` events with provenance, timestamps, deduplication keys, and platform-specific source IDs.
+- Keep **one authenticated Showrunner** with authority over approvals and project writes, regardless of which platforms contribute.
+- Support multiple simultaneous sources, cross-platform proposal queues, optional identity linking, and separate display names/icons per account. Never assume matching usernames identify the same person.
+- Use server-side OAuth/token storage, scoped permissions, webhook verification, replay protection, rate limits, retries, disconnect/reconnect handling, and audit logs. Never put streaming tokens in static GitHub Pages HTML.
+- Provide a native in-app participation fallback for platforms without approved chat APIs. Do not rely on scraping or unofficial integrations as the only path.
+- Add connector contract tests and per-platform capability flags; gracefully disable unsupported features and report connection status honestly.
+- Sequence: local working proposal/approval loop → authenticated session backend → first official connector → second connector to validate portability → additional approved connectors.
