@@ -132,6 +132,8 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.equal(await page.frameLocator('#preview').locator('h1').nth(1).getAttribute('data-crowd-picked'), '', 'clicked duplicate receives selection highlight');
     assert.equal(await page.frameLocator('#preview').locator('h1').first().getAttribute('data-crowd-picked'), null, 'other duplicate is not highlighted');
     await page.locator('#inspector-target').selectOption('0');
+    await page.locator('#inspector-jump').click();
+    assert.ok((await editor.evaluate(el => el.selectionEnd - el.selectionStart)) > 0, 'source jump highlights selected markup');
     await page.frameLocator('#preview').locator('h1:first-of-type[data-crowd-picked]').waitFor();
     assert.equal(await page.frameLocator('#preview').locator('h1').first().getAttribute('data-crowd-picked'), '', 'first duplicate can be selected separately');
     assert.equal(await page.frameLocator('#preview').locator('h1').nth(1).getAttribute('data-crowd-picked'), null, 'second duplicate clears when first is selected');
