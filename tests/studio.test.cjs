@@ -140,9 +140,10 @@ test('inspector responsive layout retains accessible selected state',()=>{
  assert.ok(html.includes('data-selected="true"'));
 });
 
-test('preview security policy is installed inside the document head, not before the doctype',()=>{
- assert.ok(html.includes("const pickBridge='<meta http-equiv=\\\"Content-Security-Policy\\\""));
- assert.ok(html.includes("script-src \\\'unsafe-inline\\\'; style-src \\\'unsafe-inline\\\'"));
+test('preview security policy is installed in the head before page scripts execute',()=>{
+ assert.ok(html.includes("const pickBridge='<meta http-equiv=\"Content-Security-Policy\""));
+ assert.ok(html.includes("default-src \\\'none\\\'; script-src \\\'unsafe-inline\\\'; style-src \\\'unsafe-inline\\\'"));
+ assert.ok(html.includes("source.value.replace(/<\\/head\\s*>/i,pickBridge+'</head>')"));
  assert.ok(html.includes('frame.srcdoc=previewDocument'));
- assert.doesNotMatch(html,/frame\.srcdoc=policy\+previewDocument/);
+ assert.doesNotMatch(html,/frame\\.srcdoc=policy\\+previewDocument/);
 });
