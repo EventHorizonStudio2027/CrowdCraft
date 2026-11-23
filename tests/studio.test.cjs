@@ -170,3 +170,12 @@ test('export and reset preserve the latest pending draft',()=>{
  assert.match(scripts[0],/flushDraft\(\);const url=URL\.createObjectURL/);
  assert.match(scripts[0],/flushDraft\(\);clearTimeout\(timer\)/);
 });
+
+test('critical queue actions provide accessible feedback and reliable exports',()=>{
+ for(const id of ['proposal-feedback','project-status','preview-utility-status']){
+  assert.match(html,new RegExp('id="'+id+'"[^>]*role="status"'),'Status announcements must be accessible: '+id);
+ }
+ assert.match(html,/setTimeout\(\(\)=>URL\.revokeObjectURL\(url\),60000\);feedback\.textContent='Exported '/,'Queue export should retain its download URL long enough for browser handoff');
+ assert.match(html,/id="crowd-interaction-polish"/,'Interaction polish should be present');
+ assert.match(html,/button:focus-visible/,'Keyboard focus must remain visible');
+});
