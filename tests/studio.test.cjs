@@ -199,3 +199,7 @@ test('project status exposes a single accessible live region',()=>{
  assert.match(html, /id="project-status" role="status" aria-live="polite"/);
  assert.doesNotMatch(html, /id="project-status"[^>]*role="status"[^>]*role="status"/);
 });
+
+test('project library exports attach a link and keep its blob URL alive for download handoff',()=>{
+ assert.match(html,/function download\(text,file,type\)\{[^}]*document\.body\.appendChild\(a\);a\.click\(\);a\.remove\(\);setTimeout\(\(\)=>URL\.revokeObjectURL\(url\),60000\)/);
+});
