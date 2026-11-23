@@ -40,3 +40,23 @@ test('preview remains isolated from editor storage',async({page})=>{
   await expect(page.frameLocator('#preview').locator('body')).toHaveAttribute('data-isolated','true');
   await expect(page.locator('#preview')).toHaveAttribute('sandbox','allow-scripts');
 });
+
+test('duplicate text selection resolves to the clicked occurrence',async({page})=>{
+  await page.goto('/');
+  await page.locator('#source').fill('<!doctype html><html><body><p>Repeated text</p><p>Repeated text</p></body></html>');
+  await page.locator('#inspector-pick').click();
+  await page.frameLocator('#preview').locator('p').nth(1).click();
+  await expect(page.locator('#inspector-target')).not.toHaveValue('');
+  await expect(page.locator('#inspector-picked')).toContainText('Repeated text');
+});
+
+test('project search filters saved library entries',async({page})=>{
+  await page.goto('/');
+  await page.locator('.navitem[data-view="projects"]').click();
+  await page.locator('#project-name').fill('Searchable smoke project');
+  await page.locator('#project-save').click();
+  await page.locator('#project-filter').fill('no-matching-project');
+  await expect(page.locator('#project-no-results')).toBeVisible();
+  await page.locator('#project-filter').fill('Searchable smoke');
+  await expect(page.locator('#project-list')).toContainText('Searchable smoke project');
+});
