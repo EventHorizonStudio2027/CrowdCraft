@@ -53,8 +53,8 @@ test('project library JSON backup round trip and cancelled restore', async ({ pa
   const download = await backupDownload;
   expect(download.suggestedFilename()).toMatch(/\.json$/);
   const backupPath = await download.path();
-  await page.locator('#project-import').setInputFiles(backupPath);
   page.once('dialog', dialog => dialog.accept());
+  await page.locator('#project-import').setInputFiles(backupPath);
   await expect(page.locator('#project-status')).toContainText('imported successfully', { timeout: 10000 });
   await page.locator('[data-view="studio"]').first().click();
   await page.locator('#source').fill('<h1>Do not replace</h1>');
