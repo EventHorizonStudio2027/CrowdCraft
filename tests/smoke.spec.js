@@ -241,3 +241,18 @@ test('open inspector fits the studio at a narrow mobile width', async ({ page })
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
   expect(overflow).toBeLessThanOrEqual(1);
 });
+
+test('project library synchronizes saved projects across tabs',async({context})=>{
+  const first=await context.newPage();
+  const second=await context.newPage();
+  await first.goto('/');
+  await second.goto('/');
+  await first.locator('.navitem[data-view="projects"]').click();
+  await second.locator('.navitem[data-view="projects"]').click();
+  await first.locator('#project-name').fill('Cross tab project');
+  await first.locator('#project-save').click();
+  await expect(second.locator('#project-list')).toContainText('Cross tab project');
+  await expect(second.locator('#project-status')).toContainText('synchronized');
+  await first.close();
+  await second.close();
+});
