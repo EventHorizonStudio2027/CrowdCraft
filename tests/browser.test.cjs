@@ -61,6 +61,15 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.match(await page.locator('#proposal-count').innerText(), /1 pending/, 'reopened decision returns to pending');
     await page.reload();
     assert.match(await page.locator('.proposal-card').first().innerText(), /Add a working leaderboard/, 'reopened submission persists');
+    await page.locator('#proposal-export').click();
+    assert.match(await page.locator('#proposal-feedback').innerText(), /Exported 1 local submissions/);
+    const backup = { format: 'crowd-proposals-v1', submissions: [{id:'restore-1',text:'Restore a real project',author:'PixelPilot',icon:'💡',status:'pending',created:new Date().toISOString()}] };
+    await page.locator('#proposal-import').setInputFiles({name:'queue.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});
+    await page.locator('#proposal-filter').selectOption('all');
+    assert.match(await page.locator('.proposal-card').first().innerText(), /Restore a real project/, 'valid backup imports');
+    await page.locator('#proposal-import').setInputFiles({name:'invalid.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({format:'wrong',submissions:[]}))});
+    assert.match(await page.locator('#proposal-feedback').innerText(), /Import failed/, 'invalid backup is rejected');
+    assert.match(await page.locator('.proposal-card').first().innerText(), /Restore a real project/, 'invalid import does not destroy existing queue');
     for (const path of ['assets/logo.svg', 'assets/brand-wordmark.svg']) {
       const image = page.locator('img[src="' + path + '"]').first();
       assert.equal(await image.evaluate(el => el.complete && el.naturalWidth > 0), true, path + ' loads as a real image');
