@@ -157,3 +157,16 @@ test('picker mode re-arms on iframe load and hidden banner remains hidden',()=>{
 test('manual refresh cancels pending autosave rerender before replacing iframe',()=>{
  assert.ok(html.includes("document.getElementById('preview-refresh').addEventListener('click',()=>{document.getElementById('preview-refresh').setAttribute('aria-busy','true');clearTimeout(timer);save();window.__previewForce=true;"));
 });
+
+// Regression: drafts must survive navigation before the 350ms debounce completes.
+test('pending edits are flushed before page hide and document visibility loss',()=>{
+ assert.match(scripts[0],/function flushDraft\(\)/);
+ assert.match(scripts[0],/window\.addEventListener\("pagehide",flushDraft\)/);
+ assert.match(scripts[0],/document\.addEventListener\("visibilitychange"/);
+ assert.match(scripts[0],/document\.visibilityState==="hidden"/);
+ assert.match(scripts[0],/draftDirty=false;render\(\)/);
+});
+test('export and reset preserve the latest pending draft',()=>{
+ assert.match(scripts[0],/flushDraft\(\);const url=URL\.createObjectURL/);
+ assert.match(scripts[0],/flushDraft\(\);clearTimeout\(timer\)/);
+});
