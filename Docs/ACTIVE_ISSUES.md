@@ -20,3 +20,10 @@ Completed work is archived below and in Git history. Outstanding priorities rest
 - Refined project-library action spacing and keyboard focus styling.
 - **Not verified:** GitHub Actions run status and actual browser test results; failing tests must be repaired before marking the browser issue complete.
 - Final independent visual polish follows this documentation commit.
+
+## Current interaction hardening — 2026-11-23
+- Added regression checks for iframe sandbox restrictions and blocked preview storage access.
+- Added regression checks for blank-name library import rejection.
+- Clarified invalid-import feedback: existing saved projects are unchanged.
+- Improved compact import status presentation.
+- Browser CI green status remains **unverified**; continue investigating Actions results before closing issue #1.
