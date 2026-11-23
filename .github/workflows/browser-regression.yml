@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
   pull_request:
+concurrency:
+  group: browser-regression-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   browser-tests:
     runs-on: ubuntu-24.04
