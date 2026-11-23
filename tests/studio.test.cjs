@@ -16,7 +16,7 @@ test('studio uses isolated preview and restrictive content security policy',()=>
  assert.doesNotMatch(html,/<iframe[^>]*allow-same-origin/);
 });
 test('starter template parses and contains valid executable scripts',()=>{
- const match=scripts[0].match(/const starter=("(?:\\.|[^"\\])*");let timer;/);
+ const match=scripts[0].match(/const starter=("(?:\\.|[^"\\])*");/);
  assert.ok(match,'starter JSON literal not found');
  const starter=JSON.parse(match[1]);
  assert.match(starter,/<!doctype html>/i);

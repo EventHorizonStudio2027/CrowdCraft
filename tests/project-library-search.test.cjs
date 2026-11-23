@@ -18,4 +18,12 @@ assert.equal(projects.length,3,'Sorting must not mutate saved project order');
 assert.ok(html.includes("filter.addEventListener('input',draw)"));
 assert.ok(html.includes("sort.addEventListener('change',draw)"));
 assert.ok(html.includes('noResults.hidden=visible.length>0||!filter.value.trim()'));
+projects.splice(0, projects.length,
+  {name:'Previous day in UTC',updated:'2026-01-04T00:30:00+04:00'},
+  {name:'Later in UTC',updated:'2026-01-03T23:30:00Z'});
+filter.value='';
+sort.value='newest';
+assert.deepEqual(visibleProjects().map(x=>x.name),['Later in UTC','Previous day in UTC']);
+sort.value='oldest';
+assert.deepEqual(visibleProjects().map(x=>x.name),['Previous day in UTC','Later in UTC']);
 console.log('Project library search and sort checks passed');

@@ -14,5 +14,7 @@ assert.equal(valid([p]),false);
 assert.equal(valid([{...p,html:'<p>OK</p>'}]),true);
 assert.ok(html.includes('new Blob([v.html]).size<=2000000'));
 assert.ok(html.includes('new Blob([html]).size>2000000'));
-assert.ok(html.includes('new Blob([JSON.stringify(next)]).size>9000000'));
+assert.ok(html.includes('new Blob([serializeBackup(next)]).size>9000000'));
 console.log('UTF-8 storage limit tests passed');
+
+assert.ok(html.includes("download(serializeBackup(projects),'crowd-projects.json'"));
