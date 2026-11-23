@@ -7,6 +7,7 @@ on:
       - 'assets/**'
       - 'tests/studio.test.cjs'
       - 'tests/browser.test.cjs'
+      - 'tests/studio-contract.test.mjs'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
@@ -28,13 +29,15 @@ jobs:
         with:
           node-version: '22'
       - name: Validate studio before publishing
-        run: node --test tests/studio.test.cjs
+        run: node --test tests/studio.test.cjs tests/studio-contract.test.mjs
       - name: Install browser test dependencies
         run: |
           npm install --no-save playwright@1.58.2
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium webkit
       - name: Run Chromium browser regression suite
-        run: node --test tests/browser.test.cjs
+        run: |
+          BROWSER_ENGINE=chromium node --test tests/browser.test.cjs
+          BROWSER_ENGINE=webkit node --test tests/browser.test.cjs
       - name: Upload browser failure evidence
         if: failure()
         uses: actions/upload-artifact@v4
