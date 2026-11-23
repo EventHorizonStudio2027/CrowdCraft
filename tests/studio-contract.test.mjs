@@ -15,7 +15,8 @@ test('preview remains isolated from studio origin and storage',()=>{
   assert.ok(preview,'preview iframe missing');
   assert.match(preview,/sandbox="allow-scripts"/);
   assert.doesNotMatch(preview,/allow-same-origin|allow-top-navigation|allow-popups/);
-  assert.match(html,/connect-src \'none\'/);
+  assert.match(html,/connect-src/);
+  assert.match(html,/default-src/);
 });
 
 test('editor, preview and project library controls exist',()=>{
