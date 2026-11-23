@@ -168,7 +168,7 @@ test('pending edits are flushed before page hide and document visibility loss',(
 });
 test('export and reset preserve the latest pending draft',()=>{
  assert.match(scripts[0],/flushDraft\(\);const url=URL\.createObjectURL/);
- assert.match(scripts[0],/flushDraft\(\);clearTimeout\(timer\)/);
+ assert.match(scripts[0],/if\(!flushDraft\(\)&&!confirm\(/);
 });
 
 test('critical queue actions provide accessible feedback and reliable exports',()=>{
