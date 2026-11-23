@@ -221,3 +221,14 @@ test('inspector keeps quoted CSS and existing large font sizes when changing col
   await expect(paragraph).toHaveCSS('font-size', '120px');
   expect(await paragraph.evaluate(element => element.style.getPropertyValue('--caption').trim())).toBe('"one;two"');
 });
+
+test('saving a project clears stale search and reveals the saved entry',async({page})=>{
+  await page.goto('/');
+  await page.locator('#source').fill('<h1>Search recovery</h1>');
+  await page.locator('.navitem[data-view="projects"]').click();
+  await page.locator('#project-filter').fill('unrelated-filter');
+  await page.locator('#project-name').fill('Search recovery project');
+  await page.locator('#project-save').click();
+  await expect(page.locator('#project-filter')).toHaveValue('');
+  await expect(page.locator('.project-entry')).toContainText('Search recovery project');
+});
