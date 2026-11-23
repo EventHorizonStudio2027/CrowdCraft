@@ -228,3 +228,12 @@ test('slash shortcut focuses project search without stealing typing',()=>{
  assert.match(html,/event\.target\.closest\('input,textarea,select,\[contenteditable\]'\)/);
  assert.match(html,/event\.preventDefault\(\);filter\.focus\(\)/);
 });
+
+test('root Pages entrypoint is a usable standalone studio',()=>{
+ assert.match(html,/^<!doctype html>/i);
+ assert.match(html,/<title>CrowdCraft Studio<\/title>/);
+ assert.match(html,/<noscript><div id="javascript-required" role="alert"/);
+ assert.match(html,/id="source"/);
+ assert.match(html,/id="preview"/);
+ assert.ok(fs.existsSync('.nojekyll'),'branch-based Pages must bypass Jekyll');
+});
