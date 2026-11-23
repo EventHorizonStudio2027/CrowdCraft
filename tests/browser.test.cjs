@@ -3,9 +3,12 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
 const fs = require('node:fs');
-const { chromium } = require('playwright');
+const { chromium, webkit } = require('playwright');
+const browserName = process.env.BROWSER_ENGINE || 'chromium';
+if (!['chromium', 'webkit'].includes(browserName)) throw new Error('Unsupported browser engine: ' + browserName);
+const browserType = { chromium, webkit }[browserName];
 
-test('browser studio workflow: editor, snippets, project recovery and viewport', async () => {
+test(`browser studio workflow (${browserName}): editor, snippets, project recovery and viewport`, async () => {
   const html = fs.readFileSync('index.html', 'utf8');
   const server = http.createServer((req, res) => {
     if (/^\/assets\/[a-z0-9._-]+\.(svg|png|webp|jpg)$/i.test(req.url || '')) {
@@ -23,7 +26,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   let browser, page;
   try {
-    browser = await chromium.launch({ headless: true });
+    browser = await browserType.launch({ headless: true });
     page = await browser.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
@@ -305,7 +308,7 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.deepEqual(errors, [], 'no page errors');
   } catch (error) {
     if (page) {
-      try { fs.mkdirSync('test-artifacts', { recursive: true }); await page.screenshot({ path: 'test-artifacts/browser-failure.png', fullPage: true }); fs.writeFileSync('test-artifacts/error.txt', String(error.stack || error) + '\nURL: ' + page.url() + '\n'); } catch {}
+      try { fs.mkdirSync('test-artifacts', { recursive: true }); await page.screenshot({ path: 'test-artifacts/browser-failure-' + browserName + '.png', fullPage: true }); fs.writeFileSync('test-artifacts/error-' + browserName + '.txt', String(error.stack || error) + '\nURL: ' + page.url() + '\n'); } catch {}
     }
     throw error;
   } finally {
