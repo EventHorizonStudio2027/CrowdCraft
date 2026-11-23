@@ -189,3 +189,13 @@ test('reset requires explicit confirmation when storage is unavailable',()=>{
  assert.match(scripts[0],/Reset anyway\? Export your work first/);
  assert.match(scripts[0],/if\(!flushDraft\(\)&&!confirm\(/);
 });
+
+test('HTML export keeps storage failure visible instead of reporting a saved draft',()=>{
+ assert.match(scripts[0],/const stored=flushDraft\(\);const url=URL\.createObjectURL/);
+ assert.match(scripts[0],/if\(stored\)document\.getElementById\("save-indicator"\)/);
+ assert.match(scripts[0],/browser storage is unavailable/);
+});
+test('project status exposes a single accessible live region',()=>{
+ assert.match(html, /id="project-status" role="status" aria-live="polite"/);
+ assert.doesNotMatch(html, /id="project-status"[^>]*role="status"[^>]*role="status"/);
+});
