@@ -13,3 +13,10 @@ Completed work is archived below and in Git history. Outstanding priorities rest
 - Added Chromium/WebKit CI workflow. Execution and pass status are not verified.
 - Prior editor reset, timestamp validation and confirmation fixes remain committed.
 - Separate final design refinement follows.
+
+## Latest batch — additional interaction coverage (2026-11-23)
+- Added automated project-library JSON backup round-trip, cancelled restore and invalid import preservation tests.
+- Strengthened imported project validation to reject blank names and empty identifiers.
+- Refined project-library action spacing and keyboard focus styling.
+- **Not verified:** GitHub Actions run status and actual browser test results; failing tests must be repaired before marking the browser issue complete.
+- Final independent visual polish follows this documentation commit.
