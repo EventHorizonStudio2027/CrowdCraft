@@ -16,7 +16,7 @@ permissions:
   id-token: write
 concurrency:
   group: crowdcraft-pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 jobs:
   deploy:
     environment:
@@ -65,17 +65,25 @@ jobs:
           path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify live published HTML
+      - name: Verify deployed page and branding match this revision
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           set -euo pipefail
+          base_url="${PAGE_URL%/}"
+          matches_release() {
+            local path="$1"
+            curl --fail --silent --show-error --location --max-time 15 \
+              --header 'Cache-Control: no-cache' "${base_url}/${path}?revision=${GITHUB_SHA}" \
+              -o /tmp/pages-verification && cmp -s "_site/${path}" /tmp/pages-verification
+          }
           for attempt in $(seq 1 12); do
-            if curl --fail --silent --show-error --location --max-time 15 --header 'Cache-Control: no-cache' "${PAGE_URL}?revision=${GITHUB_SHA}" -o /tmp/crowdcraft-live.html && grep -q 'CrowdCraft Studio' /tmp/crowdcraft-live.html && grep -q 'id="inspector-next"' /tmp/crowdcraft-live.html && grep -q 'id="inspector-undo"' /tmp/crowdcraft-live.html; then
-              echo "Published site responds with current editor: ${PAGE_URL}"
+            if matches_release index.html && matches_release assets/branding/crowdcraft-app-icon.png && matches_release assets/branding/crowdcraft-wordmark.png; then
+              echo "Live site and branding verified at ${PAGE_URL}"
               exit 0
             fi
+            echo "Waiting for the published revision (attempt ${attempt}/12)"
             sleep 10
           done
-          echo 'Live site failed verification.' >&2
+          echo 'The published page or artwork did not match the deployed revision.' >&2
           exit 1
