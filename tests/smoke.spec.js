@@ -296,3 +296,16 @@ test('inspector reads real style declarations without reading quoted CSS as prop
   await expect(page.locator('#inspector-size')).toHaveValue('18');
   await expect(page.locator('#inspector-weight')).toHaveValue('700');
 });
+
+test('unchanged saved project remains discoverable after filtered repeat save',async({page})=>{
+  await page.goto('/');
+  await page.locator('.navitem[data-view="projects"]').click();
+  await page.locator('#project-name').fill('Repeat save');
+  await page.locator('#project-save').click();
+  await page.locator('#project-filter').fill('unrelated-search');
+  await page.locator('#project-save').click();
+  await expect(page.locator('#project-filter')).toHaveValue('');
+  await expect(page.locator('#project-name')).toHaveValue('Repeat save');
+  await expect(page.locator('#project-list')).toContainText('Repeat save');
+  await expect(page.locator('#project-status')).toContainText('Already saved');
+});
