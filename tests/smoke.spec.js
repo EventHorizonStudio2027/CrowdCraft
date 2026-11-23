@@ -207,3 +207,17 @@ test('empty source cannot be saved as a project',async({page})=>{
   await expect(page.locator('#project-status')).toContainText('Nothing to save yet');
   await expect(page.locator('.project-entry')).toHaveCount(0);
 });
+
+test('inspector keeps quoted CSS and existing large font sizes when changing color', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#source').fill('<p style="--caption: &quot;one;two&quot;; font-size: 120px">Styled heading</p>');
+  await page.locator('#text-inspector summary').click();
+  await page.locator('#inspector-refresh').click();
+  await page.locator('#inspector-target').selectOption('0');
+  await page.locator('#inspector-color').fill('#18c9e8');
+  await page.locator('#inspector-apply').click();
+  const paragraph = page.frameLocator('#preview').locator('p');
+  await expect(paragraph).toHaveCSS('color', 'rgb(24, 201, 232)');
+  await expect(paragraph).toHaveCSS('font-size', '120px');
+  expect(await paragraph.evaluate(element => element.style.getPropertyValue('--caption').trim())).toBe('"one;two"');
+});
