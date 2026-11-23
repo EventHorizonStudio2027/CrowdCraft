@@ -52,7 +52,6 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     await page.locator('#proposal-filter').selectOption('approved');
     assert.match(await page.locator('.proposal-card').first().innerText(), /approved/, 'approval survives reload');
     await page.locator('#proposal-filter').selectOption('approved');
-    page.once('dialog', dialog => dialog.accept());
     await page.locator('.proposal-reopen').first().click();
     assert.match(await page.locator('#proposal-count').innerText(), /1 pending/, 'reopened decision returns to pending');
     await page.reload();
