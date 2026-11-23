@@ -14,4 +14,9 @@ jobs:
         with:
           node-version: '22'
       - name: Run existing regression suite
-        run: |\n          for test_file in tests/*.test.cjs; do\n            if [ "$test_file" != "tests/browser.test.cjs" ]; then\n              node --test "$test_file" || exit 1\n            fi\n          done
+        run: |
+          for test_file in tests/*.test.cjs; do
+            if [ "$test_file" != "tests/browser.test.cjs" ]; then
+              node --test "$test_file" || exit 1
+            fi
+          done
