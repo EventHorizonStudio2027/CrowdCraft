@@ -127,6 +127,7 @@ test('saved project restores its exact source after editing',async({page})=>{
   page.once('dialog',dialog=>dialog.accept());
   await page.locator('.project-entry').filter({hasText:'Restore regression'}).getByRole('button',{name:'Restore'}).click();
   await expect(page.locator('#source')).toHaveValue(original);
+  await expect(page.locator('#project-name')).toHaveValue('Restore regression');
   await expect(page.frameLocator('#preview').locator('h1')).toHaveText('Restorable project');
 });
 
@@ -137,4 +138,13 @@ test('library export downloads JSON backup',async({page})=>{
   await page.locator('#project-backup').click();
   const download=await downloadPromise;
   expect(download.suggestedFilename()).toMatch(/\.json$/);
+});
+
+test('empty project library shows one clear message',async({page})=>{
+  await page.goto('/');
+  await page.locator('.navitem[data-view="projects"]').click();
+  await expect(page.locator('#project-list .library-empty')).toHaveCount(1);
+  await page.locator('#project-filter').fill('not-yet-saved');
+  await expect(page.locator('#project-list .library-empty')).toHaveCount(0);
+  await expect(page.locator('#project-no-results')).toBeVisible();
 });
