@@ -222,3 +222,9 @@ test('library search clears with Escape and restores the full list',()=>{
  assert.match(html,/event\.key==='Escape'&&filter\.value/);
  assert.match(html,/filter\.value='';apply\(\)/);
 });
+
+test('slash shortcut focuses project search without stealing typing',()=>{
+ assert.match(html,/event\.key==='\/'&&!event\.ctrlKey&&!event\.metaKey/);
+ assert.match(html,/event\.target\.closest\('input,textarea,select,\[contenteditable\]'\)/);
+ assert.match(html,/event\.preventDefault\(\);filter\.focus\(\)/);
+});
