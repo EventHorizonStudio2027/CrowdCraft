@@ -232,3 +232,12 @@ test('saving a project clears stale search and reveals the saved entry',async({p
   await expect(page.locator('#project-filter')).toHaveValue('');
   await expect(page.locator('.project-entry')).toContainText('Search recovery project');
 });
+
+test('open inspector fits the studio at a narrow mobile width', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto('/');
+  await page.locator('#text-inspector summary').click();
+  await expect(page.locator('.inspector-actions')).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+});
