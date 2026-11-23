@@ -181,7 +181,7 @@ test('critical queue actions provide accessible feedback and reliable exports',(
 });
 
 test('failed local saves keep dirty drafts and warn before unloading',()=>{
- assert.match(scripts[0],/if\(ok\)draftDirty=false/);
+ assert.match(scripts[0],/draftDirty=false;return true\}catch/);
  assert.match(scripts[0],/window\.addEventListener\("beforeunload"/);
  assert.match(scripts[0],/e\.preventDefault\(\);e\.returnValue=""/);
 });

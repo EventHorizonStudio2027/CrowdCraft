@@ -89,7 +89,7 @@ test('preview updates after source edit',async({page})=>{
 
 test('visual inspector edits source and undo restores it',async({page})=>{
   await page.goto('/');
-  await page.locator('#source').fill('<!doctype html><html><body><p id="inspected-paragraph">Before edit</p></body></html>');
+  await page.locator('#source').fill('<!doctype html><html><body><p id="inspected-paragraph" title="Before edit">Before edit</p></body></html>');
   await page.locator('#text-inspector summary').click();
   await page.locator('#inspector-refresh').click();
   await page.locator('#inspector-target').selectOption('0');
@@ -99,7 +99,9 @@ test('visual inspector edits source and undo restores it',async({page})=>{
   await expect(page.locator('#inspector-value')).toHaveValue('After edit');
   await page.locator('#inspector-apply').click();
   await expect(page.locator('#source')).toHaveValue(/After edit/);
-  await expect(page.frameLocator('#preview').locator('#inspected-paragraph')).toHaveText('After edit');
+  const paragraph = page.frameLocator('#preview').locator('#inspected-paragraph');
+  await expect(paragraph).toHaveText('After edit');
+  await expect(paragraph).toHaveAttribute('title', 'Before edit');
   await page.locator('#inspector-undo').click();
   await expect(page.locator('#source')).toHaveValue(/Before edit/);
 });
@@ -147,4 +149,17 @@ test('empty project library shows one clear message',async({page})=>{
   await page.locator('#project-filter').fill('not-yet-saved');
   await expect(page.locator('#project-list .library-empty')).toHaveCount(0);
   await expect(page.locator('#project-no-results')).toBeVisible();
+});
+
+test('saving before the preview debounce preserves the live update', async ({ page }) => {
+  await page.goto('/');
+  const source = page.locator('#source');
+  const updated = '<h1>Saved and rendered</h1>';
+  await source.evaluate((editor, value) => {
+    editor.value = value;
+    editor.dispatchEvent(new Event('input', { bubbles: true }));
+    editor.dispatchEvent(new KeyboardEvent('keydown', { key: 's', ctrlKey: true, bubbles: true }));
+  }, updated);
+  await expect(page.locator('#save-indicator')).toContainText('Saved locally');
+  await expect(page.frameLocator('#preview').locator('h1')).toHaveText('Saved and rendered');
 });
