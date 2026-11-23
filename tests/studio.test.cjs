@@ -201,6 +201,7 @@ test('project status exposes a single accessible live region',()=>{
 });
 
 test('project library exports attach a link and keep its blob URL alive for download handoff',()=>{
- assert.ok(html.includes('function download(text,file,type){'),'Project library downloader must exist');
- assert.ok(html.includes('document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)'), 'Project download must attach and retain its link');
+ assert.match(html,/function download\(text,file,type\)/);
+ assert.match(html,/document\.body\.appendChild\(a\);a\.click\(\);a\.remove\(\)/);
+ assert.match(html,/setTimeout\(\(\)=>URL\.revokeObjectURL\(url\),60000\)/);
 });
