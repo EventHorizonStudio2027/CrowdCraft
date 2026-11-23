@@ -53,6 +53,10 @@ jobs:
           cp -R assets _site/assets
           touch _site/.nojekyll
           test -s _site/index.html
+          grep -qi '<!doctype html>' _site/index.html
+          grep -q 'id="studio-view"' _site/index.html
+          grep -q 'id="project-save"' _site/index.html
+          echo 'Root index.html and primary studio controls are present in the deployment artifact.'
           grep -q 'id="inspector-undo"' _site/index.html
           test -s _site/assets/logo.svg
       - uses: actions/upload-pages-artifact@v3
