@@ -80,3 +80,26 @@ test('preview updates after source edit',async({page})=>{
   await page.locator('#source').fill('<h1>Updated preview</h1>');
   await expect(page.frameLocator('#preview').locator('h1')).toHaveText('Updated preview');
 });
+
+test('visual inspector edits source and undo restores it',async({page})=>{
+  await page.goto('/');
+  await page.locator('#source').fill('<!doctype html><html><body><p>Before edit</p></body></html>');
+  await page.locator('#inspector-refresh').click();
+  await page.locator('#inspector-target').selectOption('0');
+  await page.locator('#inspector-value').fill('After edit');
+  await page.locator('#inspector-apply').click();
+  await expect(page.locator('#source')).toHaveValue(/After edit/);
+  await expect(page.frameLocator('#preview').locator('p')).toHaveText('After edit');
+  await page.locator('#inspector-undo').click();
+  await expect(page.locator('#source')).toHaveValue(/Before edit/);
+});
+
+test('project library search hides nonmatching project cards',async({page})=>{
+  await page.goto('/');
+  await page.locator('.navitem[data-view="projects"]').click();
+  await page.locator('#project-name').fill('Unique library project');
+  await page.locator('#project-save').click();
+  await page.locator('#project-filter').fill('missing-unique-term');
+  await expect(page.locator('.project-entry:visible')).toHaveCount(0);
+  await expect(page.locator('#project-no-results')).toBeVisible();
+});
