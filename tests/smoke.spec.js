@@ -45,6 +45,7 @@ test('duplicate text selection resolves to the clicked occurrence',async({page})
   await page.goto('/');
   await page.locator('#source').fill('<!doctype html><html><body><p>Repeated text</p><p>Repeated text</p></body></html>');
   await expect(page.frameLocator('#preview').locator('p')).toHaveCount(2);
+  await page.locator('#text-inspector summary').click();
   await page.locator('#inspector-pick').click();
   await page.frameLocator('#preview').locator('p').nth(1).click();
   await expect(page.locator('#inspector-target')).not.toHaveValue('');
@@ -84,6 +85,7 @@ test('preview updates after source edit',async({page})=>{
 test('visual inspector edits source and undo restores it',async({page})=>{
   await page.goto('/');
   await page.locator('#source').fill('<!doctype html><html><body><p>Before edit</p></body></html>');
+  await page.locator('#text-inspector summary').click();
   await page.locator('#inspector-refresh').click();
   await page.locator('#inspector-target').selectOption('0');
   await page.locator('#inspector-value').fill('After edit');
