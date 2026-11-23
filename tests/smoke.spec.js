@@ -163,3 +163,21 @@ test('saving before the preview debounce preserves the live update', async ({ pa
   await expect(page.locator('#save-indicator')).toContainText('Saved locally');
   await expect(page.frameLocator('#preview').locator('h1')).toHaveText('Saved and rendered');
 });
+
+test('style edits preserve data attributes and original text entities', async ({ page }) => {
+  await page.goto('/');
+  const source = page.locator('#source');
+  const original = `<p data-style="color: orange" title='style="never change"'>A &#38; B</p>`;
+  await source.fill(original);
+  await page.locator('#text-inspector summary').click();
+  await page.locator('#inspector-refresh').click();
+  await page.locator('#inspector-target').selectOption('0');
+  await page.locator('#inspector-color').fill('#18c9e8');
+  await page.locator('#inspector-apply').click();
+  await expect(source).toHaveValue(original.replace('>A', ' style="color: #18c9e8">A'));
+  const paragraph = page.frameLocator('#preview').locator('p');
+  await expect(paragraph).toHaveCSS('color', 'rgb(24, 201, 232)');
+  await expect(paragraph).toHaveText('A & B');
+  await page.locator('#inspector-undo').click();
+  await expect(source).toHaveValue(original);
+});
