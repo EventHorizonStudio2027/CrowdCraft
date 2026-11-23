@@ -33,7 +33,10 @@ test('save named project to local library',async({page})=>{
 
 test('preview remains isolated from editor storage',async({page})=>{
   await page.goto('/');
-  await page.locator('#source').fill('<!doctype html><html><body><script>document.body.dataset.isolated=String(typeof localStorage === "undefined" || (()=>{try{localStorage.getItem("probe");return false}catch{return true}})())<\\/script></body></html>');
+  const html=['<!doctype html><html><body>',
+    '<script>try { localStorage.setItem("unsafe", "yes"); document.body.dataset.isolated="false" } catch (error) { document.body.dataset.isolated="true" }',
+    '</scr'+'ipt></body></html>'].join('');
+  await page.locator('#source').fill(html);
   await expect(page.frameLocator('#preview').locator('body')).toHaveAttribute('data-isolated','true');
   await expect(page.locator('#preview')).toHaveAttribute('sandbox','allow-scripts');
 });
