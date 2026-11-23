@@ -54,6 +54,8 @@ test('browser studio workflow: editor, snippets, project recovery and viewport',
     assert.match(await page.locator('.proposal-card').first().textContent(), /approved/, 'approval survives reload');
     await page.locator('#proposal-search').fill('not-a-matching-idea');
     assert.match(await page.locator('#proposal-list').innerText(), /No approved submissions yet/);
+    await page.locator('#proposal-search-clear').click();
+    assert.match(await page.locator('.proposal-card').first().textContent(), /leaderboard/, 'clear search restores visible submission');
     await page.locator('#proposal-search').fill('leaderboard');
     assert.match(await page.locator('.proposal-card').first().textContent(), /leaderboard/);
     await page.locator('#proposal-search').fill('');
