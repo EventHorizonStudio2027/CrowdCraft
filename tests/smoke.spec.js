@@ -181,3 +181,29 @@ test('style edits preserve data attributes and original text entities', async ({
   await page.locator('#inspector-undo').click();
   await expect(source).toHaveValue(original);
 });
+
+test('saving preserves the active project name for subsequent updates',async({page})=>{
+  await page.goto('/');
+  await page.locator('#source').fill('<h1>Version one</h1>');
+  await page.locator('.navitem[data-view="projects"]').click();
+  await page.locator('#project-name').fill('Named working project');
+  await page.locator('#project-save').click();
+  await expect(page.locator('#project-name')).toHaveValue('Named working project');
+  await page.locator('.navitem[data-view="studio"]').click();
+  await page.locator('#source').fill('<h1>Version two</h1>');
+  await page.locator('.navitem[data-view="projects"]').click();
+  page.once('dialog',dialog=>dialog.accept());
+  await page.locator('#project-save').click();
+  await expect(page.locator('.project-entry')).toHaveCount(1);
+  await expect(page.locator('#project-status')).toContainText('Updated Named working project');
+});
+
+test('empty source cannot be saved as a project',async({page})=>{
+  await page.goto('/');
+  await page.locator('#source').fill('');
+  await page.locator('.navitem[data-view="projects"]').click();
+  await page.locator('#project-name').fill('Empty project');
+  await page.locator('#project-save').click();
+  await expect(page.locator('#project-status')).toContainText('Nothing to save yet');
+  await expect(page.locator('.project-entry')).toHaveCount(0);
+});
