@@ -1,21 +1,15 @@
 # Active issues — focused functional MVP
 
-Completed changes are archived in README.md development notes and Git history. Renumber unresolved priorities from 1 here; GitHub issue IDs remain permanent.
+Completed work is archived below and in Git history. Outstanding priorities restart at #1.
 
-1. **Real browser interaction verification:** start, edit, preview, save, reload, named library, import and export must be tested end-to-end in Chromium and WebKit.
-2. **Project persistence and recovery:** verify storage failure, tab close during edit, corrupt library data, and import/export round-trip.
-3. **Preview isolation and interaction correctness:** test sandboxed iframe, interactive game input/win-loss, error handling and user-visible feedback.
-4. **Live collaboration:** real Showrunner authorization, contributor submissions and shared state need a backend; local proposal queue is not multiplayer.
-5. **Real AI and release readiness:** provider selection, server-side credentials, automated browser tests and Pages publication checks remain open.
+1. **Run and fix browser regression suite** — new Chromium/WebKit Actions tests must be verified green.
+2. **Expand save/recovery coverage** — corrupt storage, quota failures, import/export round trips.
+3. **Verify sandbox preview interaction** — real game input, outcomes and error feedback.
+4. **Implement shared collaboration** — Showrunner authorization and synchronized contributors need a backend.
+5. **AI provider and deployment readiness** — secure model integration and published Pages verification.
 
-## Latest functional reliability batch — 2026-11-23
-- Editor reset now uses the tracked save path rather than leaving stale unsaved state.
-- Saved-project library rejects invalid timestamp values during load/import.
-- Restoring a saved project uses one explicit warning when it would replace a different editor draft.
-- Browser-based regression tests and published deployment are still unverified; source changes are not equivalent to passing live tests.
-
-## Latest iteration — 2026-11-23
-- Editor now flushes pending changes when the page is hidden or unloaded (verify in browser).
-- HTML export now reports success in the editor status and save indicator.
-- The final UI polish commit is recorded separately.
-- Source commits are confirmed; no browser end-to-end test or production deployment verification was performed in this iteration.
+## Completed this iteration — 2026-11-23
+- Added Playwright regression tests for editing, preview interaction, autosave, reload, named project restore, export and reset.
+- Added Chromium/WebKit CI workflow. Execution and pass status are not verified.
+- Prior editor reset, timestamp validation and confirmation fixes remain committed.
+- Separate final design refinement follows.
