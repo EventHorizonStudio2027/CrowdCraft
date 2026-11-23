@@ -76,3 +76,25 @@ test('invalid library import preserves existing projects', async ({ page }) => {
   await expect(page.locator('#project-status')).toContainText('Invalid or unreadable backup');
   await expect(page.locator('#project-list')).toContainText('Keep me');
 });
+
+test('preview remains sandboxed and cannot reach parent local storage', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-view="studio"]').first().click();
+  const frame = page.locator('#preview');
+  await expect(frame).toHaveAttribute('sandbox', 'allow-scripts');
+  await page.locator('#source').fill('<!doctype html><html><body><p id="result"></p><script>document.getElementById("result").textContent=String(location.origin==="null")+"|"+String(window.localStorage.length)</'+'script></body></html>');
+  await expect(page.frameLocator('#preview').locator('#result')).toContainText('null');
+});
+
+test('invalid imported project records do not replace library', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('[data-view="projects"]').first().click();
+  await page.locator('#project-name').fill('Original');
+  await page.locator('#project-save').click();
+  await page.locator('#project-import').setInputFiles({
+    name: 'blank-name.json', mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({format:'crowd-library-v1',projects:[{id:'valid-id',name:'   ',html:'<h1>Bad</h1>',updated:new Date().toISOString()}]}))
+  });
+  await expect(page.locator('#project-status')).toContainText('Invalid or unreadable backup');
+  await expect(page.locator('#project-list')).toContainText('Original');
+});
