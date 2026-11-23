@@ -309,3 +309,15 @@ test('unchanged saved project remains discoverable after filtered repeat save',a
   await expect(page.locator('#project-list')).toContainText('Repeat save');
   await expect(page.locator('#project-status')).toContainText('Already saved');
 });
+
+test('editor warns when another tab changes the same draft',async({context})=>{
+  const first=await context.newPage();
+  const second=await context.newPage();
+  await first.goto('/');
+  await second.goto('/');
+  await first.locator('#source').fill('<h1>Other tab edit</h1>');
+  await expect(first.locator('#save-indicator')).toContainText('Saved locally');
+  await expect(second.locator('#save-indicator')).toContainText('Another tab changed this draft');
+  await first.close();
+  await second.close();
+});
