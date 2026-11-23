@@ -73,7 +73,7 @@ test('invalid library import preserves existing projects', async ({ page }) => {
     name: 'invalid.json', mimeType: 'application/json',
     buffer: Buffer.from(JSON.stringify({ format: 'crowd-library-v1', projects: [{ id: 'bad', name: 'Bad', html: '<p>x</p>', updated: 'not-a-date' }] }))
   });
-  await expect(page.locator('#project-status')).toContainText('Invalid or unreadable backup');
+  await expect(page.locator('#project-status')).toContainText('Backup rejected');
   await expect(page.locator('#project-list')).toContainText('Keep me');
 });
 
@@ -95,6 +95,6 @@ test('invalid imported project records do not replace library', async ({ page })
     name: 'blank-name.json', mimeType: 'application/json',
     buffer: Buffer.from(JSON.stringify({format:'crowd-library-v1',projects:[{id:'valid-id',name:'   ',html:'<h1>Bad</h1>',updated:new Date().toISOString()}]}))
   });
-  await expect(page.locator('#project-status')).toContainText('Invalid or unreadable backup');
+  await expect(page.locator('#project-status')).toContainText('Backup rejected');
   await expect(page.locator('#project-list')).toContainText('Original');
 });
