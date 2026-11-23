@@ -1,0 +1,10 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+assert.match(html,/finally\{window\.__previewForce=false;document\.getElementById\('preview-refresh'\)\.removeAttribute\('aria-busy'\)\}/);
+assert.ok(html.includes("if(!saved)status.textContent='Preview refreshed, but the draft was NOT saved. Export a backup.'"));
+assert.ok(html.includes('dataset.state="saved";draftDirty=false;return true'));
+assert.ok(html.includes('if(!ok)status.textContent="Preview updated, but changes are NOT saved. Export a backup."'));
+console.log('Preview and draft save-state regression checks passed');
