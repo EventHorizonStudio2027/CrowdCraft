@@ -44,10 +44,12 @@ test('preview remains isolated from editor storage',async({page})=>{
 test('duplicate text selection resolves to the clicked occurrence',async({page})=>{
   await page.goto('/');
   await page.locator('#source').fill('<!doctype html><html><body><p>Repeated text</p><p>Repeated text</p></body></html>');
+  await expect(page.frameLocator('#preview').locator('p')).toHaveCount(2);
   await page.locator('#inspector-pick').click();
   await page.frameLocator('#preview').locator('p').nth(1).click();
   await expect(page.locator('#inspector-target')).not.toHaveValue('');
   await expect(page.locator('#inspector-picked')).toContainText('Repeated text');
+  await expect(page.locator('#inspector-picked')).toHaveAttribute('data-selected','true');
 });
 
 test('project search filters saved library entries',async({page})=>{
@@ -55,8 +57,26 @@ test('project search filters saved library entries',async({page})=>{
   await page.locator('.navitem[data-view="projects"]').click();
   await page.locator('#project-name').fill('Searchable smoke project');
   await page.locator('#project-save').click();
+  await expect(page.locator('#project-list')).toContainText('Searchable smoke project');
   await page.locator('#project-filter').fill('no-matching-project');
   await expect(page.locator('#project-no-results')).toBeVisible();
   await page.locator('#project-filter').fill('Searchable smoke');
   await expect(page.locator('#project-list')).toContainText('Searchable smoke project');
+});
+
+test('editor reset requires confirmation and cancel preserves work',async({page})=>{
+  await page.goto('/');
+  const marker='Unsaved draft '+Date.now();
+  await page.locator('#source').fill('<h1>'+marker+'</h1>');
+  page.once('dialog',dialog=>dialog.dismiss());
+  await page.locator('#reset').click();
+  await expect(page.locator('#source')).toHaveValue(new RegExp(marker));
+});
+
+test('preview updates after source edit',async({page})=>{
+  await page.goto('/');
+  await page.locator('#source').fill('<h1>First preview</h1>');
+  await expect(page.frameLocator('#preview').locator('h1')).toHaveText('First preview');
+  await page.locator('#source').fill('<h1>Updated preview</h1>');
+  await expect(page.frameLocator('#preview').locator('h1')).toHaveText('Updated preview');
 });
