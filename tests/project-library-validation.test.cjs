@@ -8,7 +8,7 @@ const b=html.indexOf('try{const stored=',a);
 const c=html.indexOf('function serializeBackup(projects){',b);
 const d=html.indexOf('function download(',c);
 assert.ok(a>=0&&b>a&&c>b&&d>c);
-const factory=new Function('deps','let {max,localStorage,key,status,projects,draw}=deps;'+html.slice(a,b)+html.slice(c,d)+';return {valid,persist,get:()=>projects}');
+const factory=new Function('deps','let {max,localStorage,key,status,projects,draw}=deps;function serializeBackup(projects){return JSON.stringify({format:\'crowd-library-v1\',projects})}'+html.slice(a,b)+html.slice(c,d)+';return {valid,persist,get:()=>projects}');
 let saves=0;const status={textContent:''};const project={id:'p1',name:'Demo',html:'<h1>Hello</h1>',updated:'2026-11-23'};
 const app=factory({max:40,localStorage:{getItem:()=>null,setItem:()=>saves++},key:'test',status,projects:[],draw:()=>{}});
 assert.equal(app.valid([project]),true);
