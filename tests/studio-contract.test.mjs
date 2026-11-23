@@ -47,3 +47,16 @@ test('studio is the initial working screen; unavailable community is disabled',(
   assert.ok(html.includes("show('studio')})();"));
   assert.match(html,/data-view="community" disabled/);
 });
+
+test('saving an existing named project updates it instead of creating duplicates',()=>{
+  assert.match(html,/const existing=projects\.find\(p=>p\.name\.toLocaleLowerCase\(\)===title\.toLocaleLowerCase\(\)\)/);
+  assert.match(html,/if\(existing&&!confirm\(/);
+  assert.match(html,/id:existing\?existing\.id:/);
+  assert.match(html,/projects\.filter\(p=>p\.id!==entry\.id\)/);
+});
+
+test('project imports validate before replacing existing data',()=>{
+  assert.match(html,/data\.format!=='crowd-library-v1'\|\|!valid\(data\.projects\)/);
+  assert.match(html,/if\(confirm\('Replace your local project library/);
+  assert.match(html,/if\(persist\(data\.projects\)\)/);
+});
