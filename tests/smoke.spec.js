@@ -271,3 +271,28 @@ test('stale project library write cannot overwrite newer browser storage',async(
   await expect(page.locator('#project-list')).toContainText('Saved by another tab');
   await expect(page.locator('#project-list')).not.toContainText('Stale write attempt');
 });
+
+test('inspector can fill empty text and preserve angle brackets in attributes', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#source').fill(`<p title="3 > 2"> </p>`);
+  await page.locator('#text-inspector summary').click();
+  await page.locator('#inspector-refresh').click();
+  await page.locator('#inspector-target').selectOption({ label: 'P · Empty text · line 1' });
+  await page.locator('#inspector-value').fill('New label');
+  await page.locator('#inspector-apply').click();
+  const paragraph = page.frameLocator('#preview').locator('p');
+  await expect(paragraph).toHaveText('New label');
+  await expect(paragraph).toHaveAttribute('title', '3 > 2');
+  await page.locator('#inspector-undo').click();
+  await expect(page.locator('#inspector-target')).toHaveValue('0');
+});
+
+test('inspector reads real style declarations without reading quoted CSS as properties', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#source').fill(`<p style="--test: 'note; font-size: 55px'; font-weight: 400; font-weight: 700">Title</p>`);
+  await page.locator('#text-inspector summary').click();
+  await page.locator('#inspector-refresh').click();
+  await page.locator('#inspector-target').selectOption('0');
+  await expect(page.locator('#inspector-size')).toHaveValue('18');
+  await expect(page.locator('#inspector-weight')).toHaveValue('700');
+});
