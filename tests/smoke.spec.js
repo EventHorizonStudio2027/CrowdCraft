@@ -261,7 +261,7 @@ test('stale project library write cannot overwrite newer browser storage',async(
   await page.goto('/');
   await page.locator('.navitem[data-view="projects"]').click();
   await page.evaluate(()=>{
-    const key=Object.keys(localStorage).find(k=>k.endsWith('-library-v1'));
+    const key=location.pathname.toLowerCase().includes('crowdcode')?'crowdcode-library-v1':'crowdcraft-library-v1';
     if(!key)throw new Error('Project library storage key not found');
     localStorage.setItem(key,JSON.stringify([{id:'external-1',name:'Saved by another tab',html:'<h1>Safe</h1>',updated:new Date().toISOString()}]));
   });
