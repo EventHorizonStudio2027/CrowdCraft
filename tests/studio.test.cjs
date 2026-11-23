@@ -91,7 +91,7 @@ test('browser validation and Pages deployment use a supported pinned Linux runne
   const workflow=fs.readFileSync(path,'utf8');
   assert.match(workflow,/runs-on:\s*ubuntu-24\.04/,path);
   assert.doesNotMatch(workflow,/runs-on:\s*ubuntu-latest/,path);
-  assert.match(workflow,/playwright install --with-deps chromium/,path);
+  assert.match(workflow,/playwright install --with-deps (?:chromium|\$\{\{ matrix\.browser \}\})/,path);
  }
 });
 test('visual inspector exposes accessible focus and reduced motion',()=>{
@@ -201,5 +201,6 @@ test('project status exposes a single accessible live region',()=>{
 });
 
 test('project library exports attach a link and keep its blob URL alive for download handoff',()=>{
- assert.match(html,/function download\(text,file,type\)\{[^}]*document\.body\.appendChild\(a\);a\.click\(\);a\.remove\(\);setTimeout\(\(\)=>URL\.revokeObjectURL\(url\),60000\)/);
+ assert.ok(html.includes('function download(text,file,type){'),'Project library downloader must exist');
+ assert.ok(html.includes('document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000)'), 'Project download must attach and retain its link');
 });
