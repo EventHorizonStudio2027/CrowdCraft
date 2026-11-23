@@ -36,6 +36,6 @@ test('empty named project and reset are recoverable', async ({ page }) => {
   await page.locator('#source').fill('<h1>Temporary</h1>');
   page.once('dialog', dialog => dialog.accept());
   await page.locator('#reset').click();
-  await expect(page.locator('#source')).toContainText('<!doctype html>');
+  await expect(page.locator('#source')).toHaveValue(/<!doctype html>/i);
   await expect(page.locator('#save-indicator')).toContainText('Saved locally', { timeout: 10000 });
 });
