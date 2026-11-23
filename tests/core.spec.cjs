@@ -27,7 +27,7 @@ test('core studio workflow: edit, preview, autosave, reload, library restore and
   const downloadPromise = page.waitForEvent('download');
   await page.locator('#export').click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toMatch(/\\.html$/);
+  expect(download.suggestedFilename()).toMatch(/\.html$/);
 });
 
 test('empty named project and reset are recoverable', async ({ page }) => {
