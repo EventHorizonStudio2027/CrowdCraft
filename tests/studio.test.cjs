@@ -214,7 +214,7 @@ test('project filtering communicates results to assistive technology',()=>{
 test('restoring a project protects unsaved drafts when browser storage fails',()=>{
  assert.match(html,/if\(!flushDraft\(\)&&!confirm\('Browser storage is unavailable\. Restore anyway\?/);
  assert.match(html,/source\.value=p\.html;source\.dispatchEvent/);
- assert.match(html,/flushDraft\(\);status\.textContent='Restored '/);
+ assert.match(html,/const saved=flushDraft\(\);status\.textContent=saved\?/);
 });
 
 test('library search clears with Escape and restores the full list',()=>{
