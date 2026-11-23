@@ -321,3 +321,21 @@ test('editor warns when another tab changes the same draft',async({context})=>{
   await first.close();
   await second.close();
 });
+
+test('inspector edits commented important styles and clears the last declaration', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('#source').fill('<style>p {color: red !important}</style><p style="/* old */ color: #002200 !important">Title</p><p style="text-align: center">Other</p>');
+  await page.locator('#text-inspector summary').click();
+  await page.locator('#inspector-refresh').click();
+  await page.locator('#inspector-target').selectOption('0');
+  await expect(page.locator('#inspector-color')).toHaveValue('#002200');
+  await page.locator('#inspector-color').fill('#18c9e8');
+  await page.locator('#inspector-apply').click();
+  const preview = page.frameLocator('#preview');
+  await expect(preview.locator('p').first()).toHaveCSS('color', 'rgb(24, 201, 232)');
+  await page.locator('#inspector-target').selectOption('1');
+  await page.locator('#inspector-align').selectOption('');
+  await page.locator('#inspector-apply').click();
+  await expect(preview.locator('p').nth(1)).not.toHaveAttribute('style', '');
+  await expect(page.locator('#source')).toHaveValue(/<p>Other<\/p>/);
+});

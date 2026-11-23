@@ -62,6 +62,6 @@ test('project imports validate before replacing existing data',()=>{
 });
 
 test('unchanged saved projects do not create new records or prompt overwrite',()=>{
-  assert.match(html,/if\(existing&&existing\.html===source\.value\)\{status\.textContent='Already saved/);
+  assert.match(html,/if\(existing&&existing\.html===source\.value\)\{[^{}]*status\.textContent='Already saved/);
   assert.match(html,/return\}if\(existing&&!confirm\(/);
 });
