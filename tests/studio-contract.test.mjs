@@ -39,7 +39,7 @@ test('collaboration controls are described as local, not remote synchronization'
 });
 
 test('studio controls have unique DOM ids',()=>{
-  const ids=[...html.matchAll(/\\bid="([^"]+)"/g)].map(match=>match[1]);
+  const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(match=>match[1]);
   assert.equal(new Set(ids).size,ids.length,'duplicate ids make controls target the wrong element');
 });
 
