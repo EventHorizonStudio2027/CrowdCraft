@@ -11,7 +11,7 @@ const browserType = { chromium, webkit }[browserName];
 test(`browser studio workflow (${browserName}): editor, snippets, project recovery and viewport`, async () => {
   const html = fs.readFileSync('index.html', 'utf8');
   const server = http.createServer((req, res) => {
-    if (/^\/assets\/[a-z0-9._-]+\.(svg|png|webp|jpg)$/i.test(req.url || '')) {
+    if (/^\/assets\/(?:branding\/)?[a-z0-9._-]+\.(svg|png|webp|jpg)$/i.test(req.url || '')) {
       const file = '.' + req.url;
       if (!fs.existsSync(file)) { res.writeHead(404); res.end('Asset not found'); return; }
       const ext = file.split('.').pop().toLowerCase();
@@ -76,9 +76,10 @@ test(`browser studio workflow (${browserName}): editor, snippets, project recove
     await page.locator('#proposal-import').setInputFiles({name:'invalid.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({format:'wrong',submissions:[]}))});
     assert.match(await page.locator('#proposal-feedback').innerText(), /Import failed/, 'invalid backup is rejected');
     assert.match(await page.locator('.proposal-card').first().textContent(), /Restore a real project/, 'invalid import does not destroy existing queue');
-    for (const path of ['assets/logo.svg', 'assets/brand-wordmark.svg']) {
+    await page.locator('[data-view="dashboard"]').click();
+    for (const path of new Set(await page.locator('img[src^="assets/branding/"]').evaluateAll(images => images.map(image => image.getAttribute('src'))))) {
       const image = page.locator('img[src="' + path + '"]').first();
-      assert.equal(await image.evaluate(el => el.complete && el.naturalWidth > 0), true, path + ' loads as a real image');
+      assert.equal(await image.evaluate(el => el.decode().then(() => el.naturalWidth > 0)), true, path + ' loads as a real image');
     }
     await page.keyboard.press('Control+k');
     assert.equal(await page.locator('#command-dialog').isVisible(), true, 'command palette opens');

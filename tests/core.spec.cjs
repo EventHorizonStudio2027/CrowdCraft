@@ -55,7 +55,7 @@ test('project library JSON backup round trip and cancelled restore', async ({ pa
   const backupPath = await download.path();
   page.once('dialog', dialog => dialog.accept());
   await page.locator('#project-import').setInputFiles(backupPath);
-  await expect(page.locator('#project-status')).toContainText('imported successfully', { timeout: 10000 });
+  await expect(page.locator('#project-status')).toContainText('Imported 1 projects into this browser', { timeout: 10000 });
   await page.locator('[data-view="studio"]').first().click();
   await page.locator('#source').fill('<h1>Do not replace</h1>');
   await page.locator('[data-view="projects"]').first().click();
@@ -97,4 +97,28 @@ test('invalid imported project records do not replace library', async ({ page })
   });
   await expect(page.locator('#project-status')).toContainText('Backup rejected');
   await expect(page.locator('#project-list')).toContainText('Original');
+});
+
+test('Star Catcher responds to pointer input and resets the score', async ({ page }) => {
+  await page.goto('/');
+  const preview = page.frameLocator('#preview');
+  const canvas = preview.locator('#game');
+  const star = await canvas.evaluate(element => {
+    const pixels = element.getContext('2d').getImageData(0, 0, element.width, element.height).data;
+    const bounds = element.getBoundingClientRect();
+    for (let offset = 0; offset < pixels.length; offset += 4) {
+      if (pixels[offset] === 248 && pixels[offset + 1] === 207 && pixels[offset + 2] === 89) {
+        const index = offset / 4;
+        return {
+          x: (index % element.width) * bounds.width / element.width,
+          y: Math.floor(index / element.width) * bounds.height / element.height
+        };
+      }
+    }
+    throw new Error('Starter did not draw a star');
+  });
+  await canvas.click({ position: star });
+  await expect(preview.locator('#score')).toHaveText(/^[1-9]\d*$/);
+  await preview.getByRole('button', { name: 'Restart' }).click();
+  await expect(preview.locator('#score')).toHaveText('0');
 });

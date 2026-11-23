@@ -51,6 +51,11 @@ test('duplicate text selection resolves to the clicked occurrence',async({page})
   await expect(page.locator('#inspector-target')).not.toHaveValue('');
   await expect(page.locator('#inspector-picked')).toContainText('Repeated text');
   await expect(page.locator('#inspector-picked')).toHaveAttribute('data-selected','true');
+  await page.locator('#inspector-value').fill('Edited second paragraph');
+  await page.locator('#inspector-apply').click();
+  await expect(page.frameLocator('#preview').locator('p')).toHaveText(['Repeated text', 'Edited second paragraph']);
+  await page.locator('#inspector-undo').click();
+  await expect(page.frameLocator('#preview').locator('p')).toHaveText(['Repeated text', 'Repeated text']);
 });
 
 test('project search filters saved library entries',async({page})=>{
@@ -84,14 +89,17 @@ test('preview updates after source edit',async({page})=>{
 
 test('visual inspector edits source and undo restores it',async({page})=>{
   await page.goto('/');
-  await page.locator('#source').fill('<!doctype html><html><body><p>Before edit</p></body></html>');
+  await page.locator('#source').fill('<!doctype html><html><body><p id="inspected-paragraph">Before edit</p></body></html>');
   await page.locator('#text-inspector summary').click();
   await page.locator('#inspector-refresh').click();
   await page.locator('#inspector-target').selectOption('0');
   await page.locator('#inspector-value').fill('After edit');
+  await page.locator('#preview-refresh').click();
+  await expect(page.locator('#preview-refresh')).not.toHaveAttribute('aria-busy', 'true');
+  await expect(page.locator('#inspector-value')).toHaveValue('After edit');
   await page.locator('#inspector-apply').click();
   await expect(page.locator('#source')).toHaveValue(/After edit/);
-  await expect(page.frameLocator('#preview').locator('p')).toHaveText('After edit');
+  await expect(page.frameLocator('#preview').locator('#inspected-paragraph')).toHaveText('After edit');
   await page.locator('#inspector-undo').click();
   await expect(page.locator('#source')).toHaveValue(/Before edit/);
 });
@@ -128,5 +136,5 @@ test('library export downloads JSON backup',async({page})=>{
   const downloadPromise=page.waitForEvent('download');
   await page.locator('#project-backup').click();
   const download=await downloadPromise;
-  expect(download.suggestedFilename()).toMatch(/\\.json$/);
+  expect(download.suggestedFilename()).toMatch(/\.json$/);
 });

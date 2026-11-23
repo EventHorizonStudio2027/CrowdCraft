@@ -40,9 +40,9 @@ test('creation snippets and focus mode are available',()=>{assert.match(html,/cl
 
 test('document outline supports source navigation and filters',()=>{assert.match(html,/id="outline-list"/);assert.match(html,/data-filter="structure"/);assert.match(html,/data-filter="assets"/);assert.match(scripts[7],/setSelectionRange/);assert.match(scripts[7],/aria-pressed/);assert.match(scripts[7],/replaceChildren/);});
 
-test('project library filter and sort are connected',()=>{assert.match(html,/id="project-filter"/);assert.match(html,/id="project-sort"/);assert.match(html,/id="project-count"/);assert.match(scripts[2],/article\.dataset\.updated=p\.updated/);assert.match(scripts[8],/MutationObserver/);assert.match(scripts[8],/insertBefore/);});
+test('project library filter and sort are connected',()=>{assert.match(html,/id="project-filter"/);assert.match(html,/id="project-sort"/);assert.match(html,/id="project-count"/);assert.match(scripts[2],/article\.dataset\.updated=p\.updated/);assert.match(scripts[2],/visibleProjects/);assert.match(scripts[2],/filter.addEventListener/);});
 
-test('restore navigation, focus escape, and library empty state are wired',()=>{assert.match(html,/id="project-no-results"/);assert.match(html,/class="library-hint"/);assert.match(scripts[2],/source\.focus\(\)/);assert.match(scripts[6],/e\.key==='Escape'/);assert.match(scripts[8],/project-no-results/);});
+test('restore navigation, focus escape, and library empty state are wired',()=>{assert.match(html,/id="project-no-results"/);assert.match(html,/class="library-hint"/);assert.match(scripts[2],/source\.focus\(\)/);assert.match(scripts[6],/e\.key==='Escape'/);assert.match(scripts[2],/project-no-results/);});
 
 test('visual builder has safe replacement confirmation and editable controls',()=>{assert.match(html,/id="visual-builder"/);assert.match(html,/id="builder-generate"/);assert.match(html,/id="builder-color"/);assert.match(scripts[9],/confirm\(/);assert.match(scripts[9],/dispatchEvent/);assert.match(scripts[9],/replaceAll\('&','&amp;'\)/);});
 
@@ -62,7 +62,7 @@ test('text picker ignores embedded code and supports Escape dismissal',()=>{asse
 
 test('preview click interception is opt-in and does not affect normal gameplay',()=>{assert.match(scripts[0],/pickEnabled=false/);assert.match(scripts[0],/if\(!pickEnabled\)return/);assert.match(scripts[0],/e.preventDefault\(\)/);assert.match(scripts[13],/preview.addEventListener\('load'/);assert.match(scripts[13],/crowd-pick-mode/);});
 
-test('official brand treatment is wired to app shell and feature icons',()=>{assert.match(html,/assets\/brand-wordmark\.svg/);assert.match(html,/class="brand-showcase"/);assert.match(html,/class="header-wordmark"/);assert.match(html,/class="feature-icon"/);assert.match(html,/prefers-reduced-motion/);assert.match(html,/<symbol id="/);});
+test('official brand treatment is wired to app shell and feature icons',()=>{assert.match(html,/assets\/branding\/crowdcraft-wordmark\.png/);assert.match(html,/class="brand-showcase"/);assert.match(html,/class="header-wordmark"/);assert.match(html,/class="feature-icon"/);assert.match(html,/prefers-reduced-motion/);assert.match(html,/<symbol id="/);});
 
 test('studio exposes source link and accessible visual selection feedback',()=>{assert.match(html,/class="source-link"/);assert.match(html,/rel="noopener noreferrer"/);assert.match(html,/data-crowd-picked/);assert.match(scripts[0],/crowd-highlight-text/);assert.match(scripts[13],/crowd-highlight-text/);assert.doesNotMatch(scripts[9],/confirm\('Restore the source from before the last generation\?'\)/);});
 
@@ -155,7 +155,7 @@ test('picker mode re-arms on iframe load and hidden banner remains hidden',()=>{
 });
 
 test('manual refresh cancels pending autosave rerender before replacing iframe',()=>{
- assert.ok(html.includes("document.getElementById('preview-refresh').addEventListener('click',()=>{document.getElementById('preview-refresh').setAttribute('aria-busy','true');clearTimeout(timer);save();window.__previewForce=true;"));
+ assert.ok(html.includes("document.getElementById('preview-refresh').addEventListener('click',()=>{document.getElementById('preview-refresh').setAttribute('aria-busy','true');clearTimeout(timer);const saved=save();window.__previewForce=true;"));
 });
 
 // Regression: drafts must survive navigation before the 350ms debounce completes.
@@ -164,7 +164,7 @@ test('pending edits are flushed before page hide and document visibility loss',(
  assert.match(scripts[0],/window\.addEventListener\("pagehide",flushDraft\)/);
  assert.match(scripts[0],/document\.addEventListener\("visibilitychange"/);
  assert.match(scripts[0],/document\.visibilityState==="hidden"/);
- assert.match(scripts[0],/draftDirty=false;render\(\)/);
+ assert.match(scripts[0],/if\(document\.visibilityState==="hidden"\)flushDraft\(\)/);
 });
 test('export and reset preserve the latest pending draft',()=>{
  assert.match(scripts[0],/flushDraft\(\);const url=URL\.createObjectURL/);
@@ -214,13 +214,13 @@ test('project filtering communicates results to assistive technology',()=>{
 test('restoring a project protects unsaved drafts when browser storage fails',()=>{
  assert.match(html,/if\(!flushDraft\(\)&&!confirm\('Browser storage is unavailable\. Restore anyway\?/);
  assert.match(html,/source\.value=p\.html;source\.dispatchEvent/);
- assert.match(html,/const saved=flushDraft\(\);status\.textContent=saved\?/);
+ assert.match(html,/const saved=flushDraft\(\);render\(\);status\.textContent=saved\?/);
 });
 
 test('library search clears with Escape and restores the full list',()=>{
  assert.match(html,/filter\.addEventListener\('keydown',event=>/);
  assert.match(html,/event\.key==='Escape'&&filter\.value/);
- assert.match(html,/filter\.value='';apply\(\)/);
+ assert.match(html,/filter\.value='';filter\.dispatchEvent\(new Event\('input'\)\)/);
 });
 
 test('slash shortcut focuses project search without stealing typing',()=>{

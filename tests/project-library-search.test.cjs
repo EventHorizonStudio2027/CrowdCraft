@@ -17,5 +17,5 @@ filter.value='missing';assert.deepEqual(visibleProjects(),[]);
 assert.equal(projects.length,3,'Sorting must not mutate saved project order');
 assert.ok(html.includes("filter.addEventListener('input',draw)"));
 assert.ok(html.includes("sort.addEventListener('change',draw)"));
-assert.ok(html.includes('noResults.hidden=!projects.length||visible.length>0'));
+assert.ok(html.includes('noResults.hidden=visible.length>0||!filter.value.trim()'));
 console.log('Project library search and sort checks passed');

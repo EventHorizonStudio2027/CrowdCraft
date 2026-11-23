@@ -58,7 +58,8 @@ jobs:
           grep -q 'id="project-save"' _site/index.html
           echo 'Root index.html and primary studio controls are present in the deployment artifact.'
           grep -q 'id="inspector-undo"' _site/index.html
-          test -s _site/assets/logo.svg
+          test -s _site/assets/branding/crowdcraft-app-icon.png
+          test -s _site/assets/branding/crowdcraft-wordmark.png
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
