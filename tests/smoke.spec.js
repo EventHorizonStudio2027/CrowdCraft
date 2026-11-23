@@ -105,3 +105,28 @@ test('project library search hides nonmatching project cards',async({page})=>{
   await expect(page.locator('.project-entry:visible')).toHaveCount(0);
   await expect(page.locator('#project-no-results')).toBeVisible();
 });
+
+test('saved project restores its exact source after editing',async({page})=>{
+  await page.goto('/');
+  const original='<h1>Restorable project</h1><p>Keep this content</p>';
+  await page.locator('#source').fill(original);
+  await page.locator('.navitem[data-view="projects"]').click();
+  await page.locator('#project-name').fill('Restore regression');
+  await page.locator('#project-save').click();
+  await page.locator('.navitem[data-view="studio"]').click();
+  await page.locator('#source').fill('<h1>Temporary replacement</h1>');
+  await page.locator('.navitem[data-view="projects"]').click();
+  page.once('dialog',dialog=>dialog.accept());
+  await page.locator('.project-entry').filter({hasText:'Restore regression'}).getByRole('button',{name:'Restore'}).click();
+  await expect(page.locator('#source')).toHaveValue(original);
+  await expect(page.frameLocator('#preview').locator('h1')).toHaveText('Restorable project');
+});
+
+test('library export downloads JSON backup',async({page})=>{
+  await page.goto('/');
+  await page.locator('.navitem[data-view="projects"]').click();
+  const downloadPromise=page.waitForEvent('download');
+  await page.locator('#project-backup').click();
+  const download=await downloadPromise;
+  expect(download.suggestedFilename()).toMatch(/\\.json$/);
+});
