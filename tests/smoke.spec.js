@@ -256,3 +256,18 @@ test('project library synchronizes saved projects across tabs',async({context})=
   await first.close();
   await second.close();
 });
+
+test('stale project library write cannot overwrite newer browser storage',async({page})=>{
+  await page.goto('/');
+  await page.locator('.navitem[data-view="projects"]').click();
+  await page.evaluate(()=>{
+    const key=Object.keys(localStorage).find(k=>k.endsWith('-library-v1'));
+    if(!key)throw new Error('Project library storage key not found');
+    localStorage.setItem(key,JSON.stringify([{id:'external-1',name:'Saved by another tab',html:'<h1>Safe</h1>',updated:new Date().toISOString()}]));
+  });
+  await page.locator('#project-name').fill('Stale write attempt');
+  await page.locator('#project-save').click();
+  await expect(page.locator('#project-status')).toContainText('changed in another tab');
+  await expect(page.locator('#project-list')).toContainText('Saved by another tab');
+  await expect(page.locator('#project-list')).not.toContainText('Stale write attempt');
+});
