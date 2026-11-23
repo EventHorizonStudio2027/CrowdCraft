@@ -82,8 +82,8 @@ test('preview remains sandboxed and cannot reach parent local storage', async ({
   await page.locator('[data-view="studio"]').first().click();
   const frame = page.locator('#preview');
   await expect(frame).toHaveAttribute('sandbox', 'allow-scripts');
-  await page.locator('#source').fill('<!doctype html><html><body><p id="result"></p><script>document.getElementById("result").textContent=String(location.origin==="null")+"|"+String(window.localStorage.length)</'+'script></body></html>');
-  await expect(page.frameLocator('#preview').locator('#result')).toContainText('null');
+  await page.locator('#source').fill('<!doctype html><html><body><p id="result"></p><script>document.getElementById("result").textContent=String(location.origin==="null")+"|"+(()=>{try{localStorage.getItem("test");return "accessible"}catch{return "blocked"}})()</'+'script></body></html>');
+  await expect(page.frameLocator('#preview').locator('#result')).toHaveText('true|blocked');
 });
 
 test('invalid imported project records do not replace library', async ({ page }) => {
