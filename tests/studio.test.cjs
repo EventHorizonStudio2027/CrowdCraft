@@ -205,3 +205,8 @@ test('project library exports attach a link and keep its blob URL alive for down
  assert.match(html,/document\.body\.appendChild\(a\);a\.click\(\);a\.remove\(\)/);
  assert.match(html,/setTimeout\(\(\)=>URL\.revokeObjectURL\(url\),60000\)/);
 });
+
+test('project filtering communicates results to assistive technology',()=>{
+ assert.match(html,/id="project-filter" type="search" aria-controls="project-list"/);
+ assert.match(html,/id="project-count" role="status" aria-live="polite" aria-atomic="true"/);
+});
