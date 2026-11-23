@@ -179,3 +179,13 @@ test('critical queue actions provide accessible feedback and reliable exports',(
  assert.match(html,/id="crowd-interaction-polish"/,'Interaction polish should be present');
  assert.match(html,/button:focus-visible/,'Keyboard focus must remain visible');
 });
+
+test('failed local saves keep dirty drafts and warn before unloading',()=>{
+ assert.match(scripts[0],/if\(ok\)draftDirty=false/);
+ assert.match(scripts[0],/window\.addEventListener\("beforeunload"/);
+ assert.match(scripts[0],/e\.preventDefault\(\);e\.returnValue=""/);
+});
+test('reset requires explicit confirmation when storage is unavailable',()=>{
+ assert.match(scripts[0],/Reset anyway\? Export your work first/);
+ assert.match(scripts[0],/if\(!flushDraft\(\)&&!confirm\(/);
+});
