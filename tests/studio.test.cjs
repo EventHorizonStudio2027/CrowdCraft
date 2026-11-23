@@ -216,3 +216,9 @@ test('restoring a project protects unsaved drafts when browser storage fails',()
  assert.match(html,/source\.value=p\.html;source\.dispatchEvent/);
  assert.match(html,/flushDraft\(\);status\.textContent='Restored '/);
 });
+
+test('library search clears with Escape and restores the full list',()=>{
+ assert.match(html,/filter\.addEventListener\('keydown',event=>/);
+ assert.match(html,/event\.key==='Escape'&&filter\.value/);
+ assert.match(html,/filter\.value='';apply\(\)/);
+});
