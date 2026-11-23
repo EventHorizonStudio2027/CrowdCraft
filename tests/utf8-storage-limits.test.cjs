@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
+const start=html.indexOf('function valid(x){',html.indexOf("const key='crowd"));
+const end=html.indexOf('try{const stored=',start);
+const valid=new Function('max','Blob',html.slice(start,end)+';return valid')(40,Blob);
+const emoji='😀'.repeat(600000);
+const p={id:'1',name:'Emoji project',html:emoji,updated:new Date().toISOString()};
+assert.ok(emoji.length<2000000);
+assert.ok(new Blob([emoji]).size>2000000);
+assert.equal(valid([p]),false);
+assert.equal(valid([{...p,html:'<p>OK</p>'}]),true);
+assert.ok(html.includes('new Blob([v.html]).size<=2000000'));
+assert.ok(html.includes('new Blob([html]).size>2000000'));
+assert.ok(html.includes('new Blob([JSON.stringify(next)]).size>9000000'));
+console.log('UTF-8 storage limit tests passed');
