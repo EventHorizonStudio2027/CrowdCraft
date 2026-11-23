@@ -339,3 +339,18 @@ test('inspector edits commented important styles and clears the last declaration
   await expect(preview.locator('p').nth(1)).not.toHaveAttribute('style', '');
   await expect(page.locator('#source')).toHaveValue(/<p>Other<\/p>/);
 });
+
+test('stale editor cannot overwrite another tabs saved draft',async({context})=>{
+  const first=await context.newPage();
+  const second=await context.newPage();
+  await first.goto('/');
+  await second.goto('/');
+  await first.locator('#source').fill('<h1>Newer draft</h1>');
+  await expect(first.locator('#save-indicator')).toContainText('Saved locally');
+  await second.locator('#source').fill('<h1>Stale draft</h1>');
+  await expect(second.locator('#save-indicator')).toContainText('Save paused');
+  const key=await first.evaluate(()=>Object.keys(localStorage).find(k=>k.endsWith('-editor')));
+  expect(await first.evaluate(key=>localStorage.getItem(key),key)).toBe('<h1>Newer draft</h1>');
+  await first.close();
+  await second.close();
+});
