@@ -354,3 +354,11 @@ test('stale editor cannot overwrite another tabs saved draft',async({context})=>
   await first.close();
   await second.close();
 });
+
+test('preview distinguishes the bundled sample game from a user project', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('#preview-hint')).toHaveText('Sample game · Star Catcher');
+  await page.locator('#source').fill('<h1>My project</h1>');
+  await expect(page.locator('#preview-hint')).toHaveText('Your project preview');
+  await expect(page.frameLocator('#preview').locator('h1')).toHaveText('My project');
+});
