@@ -13,6 +13,7 @@ on:
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 permissions:
+  actions: read
   contents: read
   pages: write
   id-token: write
@@ -62,9 +63,27 @@ jobs:
           grep -q 'id="inspector-undo"' _site/index.html
           test -s _site/assets/branding/crowdcraft-app-icon.png
           test -s _site/assets/branding/crowdcraft-wordmark.png
-      - uses: actions/upload-pages-artifact@v3
+      - id: pages-artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: _site
+      - name: Wait for the Pages artifact to become visible
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ steps.pages-artifact.outputs.artifact_id }}
+        run: |
+          set -euo pipefail
+          [[ "$ARTIFACT_ID" =~ ^[0-9]+$ ]]
+          for attempt in $(seq 1 12); do
+            if ids=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?name=github-pages" --jq '.artifacts[] | select(.expired == false) | .id') &&
+               grep -Fxq "$ARTIFACT_ID" <<< "$ids"; then
+              exit 0
+            fi
+            echo "Waiting for Pages artifact (attempt ${attempt}/12)"
+            sleep 5
+          done
+          echo 'Pages artifact was uploaded but did not become visible to the deployment API.' >&2
+          exit 1
       - id: deployment
         uses: actions/deploy-pages@v4
       - name: Verify deployed page and branding match this revision
