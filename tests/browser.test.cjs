@@ -30,7 +30,12 @@ test(`browser studio workflow (${browserName}): editor, snippets, project recove
     page = await browser.newPage();
     const errors = [];
     page.on('pageerror', e => errors.push(e.message));
-    page.on('dialog', dialog => dialog.accept());
+    let dismissNextDialog = false;
+    page.on('dialog', dialog => {
+      if (!dismissNextDialog) return dialog.accept();
+      dismissNextDialog = false;
+      return dialog.dismiss();
+    });
     await page.goto('http://127.0.0.1:' + server.address().port);
     await page.locator('#showrunner-name').fill('Captain Nova');
     await page.locator('#showrunner-icon').selectOption('🎮');
@@ -70,10 +75,16 @@ test(`browser studio workflow (${browserName}): editor, snippets, project recove
     await page.locator('#proposal-export').click();
     assert.match(await page.locator('#proposal-feedback').innerText(), /Exported 1 local submissions/);
     const backup = { format: 'crowd-proposals-v1', submissions: [{id:'restore-1',text:'Restore a real project',author:'PixelPilot',icon:'💡',status:'pending',created:new Date().toISOString()}] };
+    dismissNextDialog = true;
     await page.locator('#proposal-import').setInputFiles({name:'queue.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});
+    await page.locator('#proposal-feedback').filter({hasText: 'Import canceled.'}).waitFor();
+    assert.match(await page.locator('.proposal-card').first().textContent(), /Add a working leaderboard/);
+    await page.locator('#proposal-import').setInputFiles({name:'queue.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(backup))});
+    await page.locator('#proposal-feedback').filter({hasText: 'Imported 1 submissions from JSON.'}).waitFor();
     await page.locator('#proposal-filter').selectOption('all');
     assert.match(await page.locator('.proposal-card').first().textContent(), /Restore a real project/, 'valid backup imports');
     await page.locator('#proposal-import').setInputFiles({name:'invalid.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({format:'wrong',submissions:[]}))});
+    await page.locator('#proposal-feedback').filter({hasText: /Import failed/}).waitFor();
     assert.match(await page.locator('#proposal-feedback').innerText(), /Import failed/, 'invalid backup is rejected');
     assert.match(await page.locator('.proposal-card').first().textContent(), /Restore a real project/, 'invalid import does not destroy existing queue');
     await page.locator('[data-view="dashboard"]').click();
