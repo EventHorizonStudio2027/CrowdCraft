@@ -25,7 +25,7 @@ jobs:
       - name: Install browser test dependencies
         run: |
           npm install --no-save playwright@1.56.1
-          npx playwright install --with-deps ${{ matrix.browser }}
+          node node_modules/playwright/cli.js install --with-deps ${{ matrix.browser }}
       - name: Browser regression tests (${{ matrix.browser }})
         env:
           BROWSER_ENGINE: ${{ matrix.browser }}

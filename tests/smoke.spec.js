@@ -361,4 +361,6 @@ test('preview distinguishes the bundled sample game from a user project', async 
   await page.locator('#source').fill('<h1>My project</h1>');
   await expect(page.locator('#preview-hint')).toHaveText('Your project preview');
   await expect(page.frameLocator('#preview').locator('h1')).toHaveText('My project');
+  await page.locator('#source').fill('');
+  await expect(page.locator('#preview-hint')).toHaveText('Empty preview · Add HTML in the editor');
 });

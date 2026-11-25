@@ -91,7 +91,7 @@ test('browser validation and Pages deployment use a supported pinned Linux runne
   const workflow=fs.readFileSync(path,'utf8');
   assert.match(workflow,/runs-on:\s*ubuntu-24\.04/,path);
   assert.doesNotMatch(workflow,/runs-on:\s*ubuntu-latest/,path);
-  assert.match(workflow,/playwright install --with-deps (?:chromium|\$\{\{ matrix\.browser \}\})/,path);
+  assert.match(workflow,/node node_modules\/playwright\/cli\.js install --with-deps (?:chromium|\$\{\{ matrix\.browser \}\})/,path);
  }
 });
 test('visual inspector exposes accessible focus and reduced motion',()=>{
